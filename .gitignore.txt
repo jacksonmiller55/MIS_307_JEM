@@ -1,0 +1,7 @@
+#This is created to make git (our Repository) ignore files that we don't want to constantly have to push up to the cloud and download.
+
+#Ignores all log files.
+*.log
+
+#ignore the database file for now.
+/BigJavaDB
