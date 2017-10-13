@@ -21,7 +21,7 @@ public class HotelManagmentSystem {
 	public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
 
 		if (args.length == 0) {
-			System.out.println("Usage: java CarDB propertiesFile");
+			System.out.println("Usage: java HotelDB propertiesFile");
 			System.exit(0);
 		}
 
@@ -39,30 +39,30 @@ public class HotelManagmentSystem {
 			Statement stat = conn.createStatement();
 
 			try {
-				stat.execute("DROP TABLE Car");
+				stat.execute("DROP TABLE Room");
 			} catch (java.sql.SQLException e) {
 			}
 			
 			createTable(stat);
 
-			loadCars(stat, filename);
+			loadRooms(stat, filename);
 			printTable(stat);
-			stat.execute("DROP TABLE Car");
+			stat.execute("DROP TABLE Room");
 		}
 	}
 
 	public static Statement createTable(Statement stat) {
 		try {
-			stat.execute("CREATE TABLE Car " + "(Car_Manufacture VARCHAR(12), " + "Car_Model VARCHAR(12), "
-					+ "Car_Year INT, " + "Car_MPG INT)");
+			stat.execute("CREATE TABLE Room (Room_Number INT, Room_Type VARCHAR(40), Room_Price INT)");
 		} catch (SQLException e) {
 			System.out.println("The system was unable to create the table in the database.");
 			e.printStackTrace();
 		}
+		System.out.println("System created table.");
 		return stat;
 	}
 
-	public static void loadCars(Statement stat, String filename) {
+	public static void loadRooms(Statement stat, String filename) {
 		File inputFile = new File(filename);
 		Scanner in = null;
 
@@ -73,31 +73,29 @@ public class HotelManagmentSystem {
 			e.printStackTrace();
 		}
 
-		String manufacturer = null;
-		String model = null;
-		int year = 0;
-		int mpg = 0;
+		int roomNumber = 0;
+		String roomType = null;
+		int roomPrice = 0;
 
 		while (in.hasNextLine()) {
 
-			year = Integer.parseInt(in.next());
-			manufacturer = in.next().trim();
-			model = in.next().trim();
-			mpg = Integer.parseInt(in.next());
+			roomNumber = Integer.parseInt(in.next());
+			roomType = in.next();
+			roomPrice = Integer.parseInt(in.next());
+			
+			
 
-			StringBuilder insertCarInfo = new StringBuilder();
-			insertCarInfo.append("INSERT INTO Car VALUES ('");
-			insertCarInfo.append(manufacturer);
-			insertCarInfo.append("', '");
-			insertCarInfo.append(model);
-			insertCarInfo.append("', ");
-			insertCarInfo.append(year);
-			insertCarInfo.append(", ");
-			insertCarInfo.append(mpg);
-			insertCarInfo.append(")");
+			StringBuilder insertRoomInfo = new StringBuilder();
+			insertRoomInfo.append("INSERT INTO Room VALUES (");
+			insertRoomInfo.append(roomNumber);
+			insertRoomInfo.append(", '");
+			insertRoomInfo.append(roomType);
+			insertRoomInfo.append("', ");
+			insertRoomInfo.append(roomPrice);
+			insertRoomInfo.append(")");
 
 			try {
-				stat.execute(insertCarInfo.toString());
+				stat.execute(insertRoomInfo.toString());
 			} catch (SQLException e) {
 				System.out.println(
 						"The system was not able to initiate the database table from the input file. Please check your file contents.");
@@ -110,13 +108,17 @@ public class HotelManagmentSystem {
 	public static void printTable(Statement stat) throws SQLException {
 		ResultSet result = null;
 		try {
-			result = stat.executeQuery("SELECT * FROM CAR");
+			result = stat.executeQuery("SELECT * FROM Room");
 		} catch (SQLException e) {
 			System.out.print("The system was not able to execute the query to print the table.");
 			e.printStackTrace();
 		}
-		int columnsNumber = 4;
-
+		
+		System.out.println();
+		System.out.println("Room\t Room Type\t Price");
+		
+		int columnsNumber = 3;
+		
 		while (result.next()) {
 			for (int i = 1; i <= columnsNumber; i++) {
 				if (i > 1) {
@@ -125,10 +127,10 @@ public class HotelManagmentSystem {
 
 				}
 				String info = result.getString(i);
-				if (i < 3) {
-					System.out.printf("%-12s", info);
+				if (i < 2) {
+					System.out.printf("%-6s", info);
 				} else {
-					System.out.printf("%-4s", info);
+					System.out.printf("%-8s", info);
 				}
 			}
 			System.out.println("");

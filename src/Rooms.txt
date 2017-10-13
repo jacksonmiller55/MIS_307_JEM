@@ -1,17 +1,4 @@
-2017	Toyota	Prius 	52
-2017	Kia	Optima 	31
-2017	Hyundai 	Sonata	31
-2017	Nissan	Altima	31
-2017	Chevrolet	Malibu	30
-2017	Honda	Accord	30
-2017	Mazda	6	29
-2017	Subaru	Legacy	29
-2017	Toyota	Camry	27
-2017	Chrysler	200	27
-2017	Ford	Fusion	27
-2017	Volkswagen	Passat	27
-2017	Volkswagen	CC	25
-2017	Chevrolet	Impala	25
-2017	Buick	LaCrosse	25
-2017	Nissan	Maxima	25
-2017	Buick	Regal	24
+101		Suite		100
+102		kitchen		200
+103		normal		23
+104		Master		400
