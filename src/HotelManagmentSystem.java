@@ -43,7 +43,7 @@ public class HotelManagmentSystem {
 			} catch (java.sql.SQLException e) {
 			}
 			
-			System.out.println("People that have cloned the repository: Jackson");
+			System.out.println("People that have cloned the repository: Jackson, Elias");
 			
 			createTable(stat);
 
