@@ -48,5 +48,5 @@
 148          Kitchenette-Suite    159.99
 149          Kitchenette-Suite    159.99
 150          Kitchenette-Suite    159.99
-151          Luxury-Suite         199.99
-152          Luxury-Suite         199.99
+151          Luxury-Suite		  199.99
+152          Luxury-Suite		  199.99

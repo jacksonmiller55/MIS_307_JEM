@@ -55,7 +55,7 @@ public class HotelManagmentSystem {
 
 	public static Statement createTable(Statement stat) {
 		try {
-			stat.execute("CREATE TABLE Room (Room_Number INT, Room_Type VARCHAR(40), Room_Price INT)");
+			stat.execute("CREATE TABLE Room (Room_Number INT, Room_Type VARCHAR(40), Room_Price DECIMAL(10,2))");
 		} catch (SQLException e) {
 			System.out.println("The system was unable to create the table in the database.");
 			e.printStackTrace();
@@ -77,13 +77,13 @@ public class HotelManagmentSystem {
 
 		int roomNumber = 0;
 		String roomType = null;
-		int roomPrice = 0;
+		double roomPrice = 0.00;
 
 		while (in.hasNextLine()) {
 
 			roomNumber = Integer.parseInt(in.next());
 			roomType = in.next();
-			roomPrice = Integer.parseInt(in.next());
+			roomPrice = Double.parseDouble(in.next());
 			
 			
 
