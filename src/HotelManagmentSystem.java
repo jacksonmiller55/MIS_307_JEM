@@ -1,10 +1,5 @@
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.Scanner;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -37,6 +32,7 @@ public class HotelManagmentSystem {
 
 			} else if (selection.equals("P")) {
 				//Do something
+				System.out.print("This doesn't actually do anything right now.");
 			}
 			// Tells the program that this is no longer the first run.
 			firstRun = false;
