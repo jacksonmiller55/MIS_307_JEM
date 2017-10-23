@@ -18,8 +18,8 @@ public class HotelManagmentSystem {
 		Scanner input = new Scanner(System.in);
 		boolean firstRun = true;
 		boolean continueToRun = true;
-		Calander year = new Calander();
-
+		Calendar year = new Calendar();
+		
 		while (continueToRun) {
 			// Adds 2 lines for spacing after the first time the program is run.
 			if (!firstRun) {
@@ -79,7 +79,7 @@ public class HotelManagmentSystem {
 		return selection.toUpperCase();
 	}
 
-	public static void bookSpecificRoomNumber(Calander year, Scanner input) {
+	public static void bookSpecificRoomNumber(Calendar year, Scanner input) {
 		int month = 0;
 		int day = 0;
 		int room = 100;
@@ -102,7 +102,7 @@ public class HotelManagmentSystem {
 		}
 	}
 
-	public static void deselctSpecificRoomNumber(Calander year, Scanner input) {
+	public static void deselctSpecificRoomNumber(Calendar year, Scanner input) {
 		int month = 0;
 		int day = 0;
 		int room = 100;
