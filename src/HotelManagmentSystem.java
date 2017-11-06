@@ -30,11 +30,12 @@ public class HotelManagmentSystem {
 
 			if (selection.equals("Q")) {
 				continueToRun = quitProgram();
-
 			} else if (selection.equals("B")) {
 				bookSpecificRoomNumber(year, input);
 			}else if (selection.equals("D")) {
 				deselctSpecificRoomNumber(year, input);
+			}else if (selection.equals("T")) {
+				bookRoomType(year, input);
 			}
 			
 			// Tells the program that this is no longer the first run.
@@ -56,6 +57,7 @@ public class HotelManagmentSystem {
 		System.out.println("Select from the following options");
 		System.out.println("(Q) Quit");
 		System.out.println("(B) Book Specific Room Number");
+		System.out.println("(T) Book Room Type");
 		System.out.println("(D) Deselect Specific Room Number because of error");
 
 		selection = input.next();
@@ -69,7 +71,7 @@ public class HotelManagmentSystem {
 				System.out.println(
 						"Please enter only the selected character to select the appropriat option. Numbers will not be accepted.");
 				selection = input.next();
-			} else if ((selection.toUpperCase().equals("Q")) || (selection.toUpperCase().equals("B")) || (selection.toUpperCase().equals("D"))) {
+			} else if ((selection.toUpperCase().equals("Q")) || (selection.toUpperCase().equals("B")) || (selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("T"))) {
 				correctInput = true;
 			} else {
 				System.out.println("The Character must match one of the appropriat options.");
@@ -95,10 +97,10 @@ public class HotelManagmentSystem {
 
 		if (isRoomAvailable) {
 			year.bookRoom(month, day, room);
-			System.out.printf("Room %d was booked for %d-%d", room+1, month+1, day+1);
+			System.out.printf("Room %d was booked for %d-%d", room, month+1, day+1);
 
 		} else {
-			System.out.printf("Room %d is unavailable for %d-%d", room+1, month+1, day+1);
+			System.out.printf("Room %d is unavailable for %d-%d", room, month+1, day+1);
 		}
 	}
 
@@ -118,10 +120,10 @@ public class HotelManagmentSystem {
 
 		if (!isRoomAvailable) {
 			year.unbookRoom(month, day, room);
-			System.out.printf("Room %d was unselected for %d-%d", room+1, month+1, day+1);
+			System.out.printf("Room %d was unselected for %d-%d", room, month+1, day+1);
 
 		} else {
-			System.out.printf("Room %d was not unselected for %d-%d", room+1, month+1, day+1);
+			System.out.printf("Room %d was not unselected for %d-%d", room, month+1, day+1);
 		}
 	}
 	
@@ -206,5 +208,122 @@ public class HotelManagmentSystem {
 			}
 		}
 		return room;
+	}
+	
+	public static void bookRoomType (Calendar year, Scanner input) {
+		String selection = null;
+		boolean correctInput = false;
+		
+		System.out.println("What type of room would you like to book?");
+		System.out.println("(D)ouble Queen");
+		System.out.println("(S)ingle King");
+		System.out.println("(K)itchen Suite");
+		System.out.println("(L)uxury Suite");
+		
+		selection = input.next();
+
+		while (!correctInput) {
+
+			if (selection.length() > 2) {
+				System.out.println("Please enter only one character to select the appropriat option.");
+				selection = input.next();
+			} else if (!Character.isAlphabetic(selection.charAt(0))) {
+				System.out.println(
+						"Please enter only the selected character to select the appropriat option. Numbers will not be accepted.");
+				selection = input.next();
+			} else if ((selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("S")) || (selection.toUpperCase().equals("K")) || (selection.toUpperCase().equals("L"))) {
+				correctInput = true;
+			} else {
+				System.out.println("The Character must match one of the appropriat options.");
+				selection = input.next();
+			}
+		}
+		int month = 0;
+		int day = 0;
+
+				
+		if (selection.equals("D")) {
+			System.out.println("You have selected Queen Double");
+			month = monthInput(input, month);
+			day = dayInput(input, month, day);
+			
+			int room = 101;
+			boolean isRoomAvailable = false;
+			while ((!isRoomAvailable) && (room <= 120)) {
+				isRoomAvailable = year.checkRoomAvailable(month, day, room);
+				room += 1;
+			}
+			if((room == 121) && (!isRoomAvailable)) {
+				System.out.println("There are no rooms of this style available.");
+			}
+			else {
+				room -= 1;
+				year.bookRoom(month, day, room);
+				System.out.printf("Room %d was booked for %d-%d", room, month+1, day+1);
+			}
+			
+			
+		}else if (selection.equals("S")) {
+			System.out.println("You have selected Single King");
+			month = monthInput(input, month);
+			day = dayInput(input, month, day);
+						
+			int room = 121;
+			boolean isRoomAvailable = false;
+			while ((!isRoomAvailable) && (room <= 140)) {
+				isRoomAvailable = year.checkRoomAvailable(month, day, room);
+				room += 1;
+			}
+			if((room == 141) && (!isRoomAvailable)) {
+				System.out.println("There are no rooms of this style available.");
+			}
+			else {
+				room -= 1;
+				year.bookRoom(month, day, room);
+				System.out.printf("Room %d was booked for %d-%d", room, month+1, day+1);
+			}
+			
+		}else if (selection.equals("K")) {
+			System.out.println("You have selected Kitchen Suite");
+			month = monthInput(input, month);
+			day = dayInput(input, month, day);
+			
+			int room = 141;
+			boolean isRoomAvailable = false;
+			while ((!isRoomAvailable) && (room <= 150)) {
+				isRoomAvailable = year.checkRoomAvailable(month, day, room);
+				room += 1;
+			}
+			if((room == 151) && (!isRoomAvailable)) {
+				System.out.println("There are no rooms of this style available.");
+			}
+			else {
+				room -= 1;
+				year.bookRoom(month, day, room);
+				System.out.printf("Room %d was booked for %d-%d", room, month+1, day+1);
+			}
+			
+		}else if (selection.equals("L")) {
+			System.out.println("You have selected Luxury Suite");
+			month = monthInput(input, month);
+			day = dayInput(input, month, day);
+			
+			int room = 151;
+			boolean isRoomAvailable = false;
+			while ((!isRoomAvailable) && (room <= 152)) {
+				isRoomAvailable = year.checkRoomAvailable(month, day, room);
+				room += 1;
+			}
+			if((room == 153) && (!isRoomAvailable)) {
+				System.out.println("There are no rooms of this style available.");
+			}
+			else {
+				room -= 1;
+				year.bookRoom(month, day, room);
+				System.out.printf("Room %d was booked for %d-%d", room, month+1, day+1);
+			}
+			
+		}
+
 	}
 }

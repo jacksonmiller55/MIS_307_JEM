@@ -106,16 +106,11 @@ public class Calendar {
 	 * @return (boolean) returns the availability of the room
 	 */
 	public boolean checkRoomAvailable(int month, int day, int room) {
-		String availability = "";
 		boolean roomSelected = Months.get(month).get(day).getRoom(room);
 		if (roomSelected) {
-			availability = "Currently Available";
-			System.out.println(availability);
 			return roomSelected;
 		}
 		else{
-			availability = "Current Booked";
-			System.out.println(availability);
 			return roomSelected;
 		}
 	}
@@ -129,16 +124,11 @@ public class Calendar {
 	 * @return (boolean) returns if room is booked or not.
 	 */
 	public boolean bookRoom(int month, int day, int room) {
-		String availability = "";
 		boolean roomSelected = Months.get(month).get(day).setRoom(room);
 		if (roomSelected) {
-			availability = "Room successfully booked";
-			System.out.println(availability);
 			return roomSelected;
 		}
 		else{
-			availability = "Unsuccessful room not booked";
-			System.out.println(availability);
 			return roomSelected;
 		}
 	}
