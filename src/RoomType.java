@@ -10,15 +10,15 @@ public class RoomType {
 	private int [] luxurySuiteRooms = new int [LUXURY_SUITE];
 	
 	public boolean getRoom(int room) {
-		room -= 100;
-		if ((room >= 1) && (room <=20)) {
+		room -= 101;
+		if ((room >= 0) && (room <20)) {
 			return getQueenDoubleRoom(room);
 		}
-		else if((room >= 21) && (room <= 41)) {
+		else if((room >= 20) && (room < 40)) {
 			room -=20;
 			return getSingleKingRoom(room);
 		}
-		else if((room >= 41) && (room <=50)) {
+		else if((room >= 40) && (room < 50)) {
 			room-=40;
 			return getkitchenSuiteRoom(room);
 		}
@@ -61,15 +61,15 @@ public class RoomType {
 	}
 	
 	public boolean setRoom(int room) {
-		room -= 100;
-		if ((room >= 1) && (room <=20)) {
+		room -= 101;
+		if ((room >= 0) && (room < 20)) {
 			return setQueenDoubleRoom(room);
 		}
-		else if((room >= 21) && (room <= 41)) {
+		else if((room >= 20) && (room < 40)) {
 			room -=20;
 			return setSingleKingRoom(room);
 		}
-		else if((room >= 41) && (room <=50)) {
+		else if((room >= 40) && (room < 50)) {
 			room-=40;
 			return setkitchenSuiteRoom(room);
 		}
@@ -109,22 +109,22 @@ public class RoomType {
 	private boolean setLuxurySuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (luxurySuiteRooms[selectedRoom] == 0) {
-			queenDoubleRooms[selectedRoom] = 1;
+			luxurySuiteRooms[selectedRoom] = 1;
 			bookRoom = true;
 		}
 	return bookRoom;
 	}
 	
 	public boolean deselectRoom(int room) {
-		room -= 100;
-		if ((room >= 1) && (room <=20)) {
+		room -= 101;
+		if ((room >= 0) && (room < 20)) {
 			return deselectQueenDoubleRoom(room);
 		}
-		else if((room >= 21) && (room <= 41)) {
+		else if((room >= 20) && (room <= 40)) {
 			room -=20;
 			return deselectSingleKingRoom(room);
 		}
-		else if((room >= 41) && (room <=50)) {
+		else if((room >= 40) && (room < 50)) {
 			room-=40;
 			return deselectkitchenSuiteRoom(room);
 		}
@@ -164,7 +164,7 @@ public class RoomType {
 	private boolean deselectLuxurySuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (luxurySuiteRooms[selectedRoom] == 1) {
-			queenDoubleRooms[selectedRoom] = 0;
+			luxurySuiteRooms[selectedRoom] = 0;
 			bookRoom = true;
 		}
 	return bookRoom;
