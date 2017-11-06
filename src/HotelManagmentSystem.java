@@ -55,7 +55,7 @@ public class HotelManagmentSystem {
 		boolean correctInput = false;
 
 		System.out.println("Select from the following options");
-		System.out.println("(Q) Quit");
+		System.out.println("(Q) Quit the program");
 		System.out.println("(B) Book Specific Room Number");
 		System.out.println("(T) Book Room Type");
 		System.out.println("(D) Deselect Specific Room Number because of error");
