@@ -1,4 +1,10 @@
-
+/**
+ * Code for RoomType. This class provides the structure for getting and setting rooms. The room number determines the type of room. 
+ * @author Jackson Miller
+ * @author Madison Fisher
+ * @author Elias VanHorn
+ *
+ */
 public class RoomType {
 	private final int QUEEN_DOUBLE = 20;
 	private final int SINGLE_KING = 20;
@@ -9,6 +15,11 @@ public class RoomType {
 	private int [] kitchenSuiteRooms = new int [KITCHEN_SUITE];
 	private int [] luxurySuiteRooms = new int [LUXURY_SUITE];
 	
+	/**
+	 * Gets the room number from the appropriate room type array.
+	 * @param room Room number that the user would like to book.
+	 * @return True: if the room is available. False: if the room is not available.
+	 */
 	public boolean getRoom(int room) {
 		room -= 101;
 		if ((room >= 0) && (room <20)) {
@@ -28,6 +39,11 @@ public class RoomType {
 		}
 	}
 	
+	/** 
+	 * Checks to see if a certain Double Queen room is available.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if available. False if unavailable.
+	 */
 	private boolean getQueenDoubleRoom(int selectedRoom) {
 		boolean isAvailable = false;
 			if (queenDoubleRooms[selectedRoom] == 0) {
@@ -36,6 +52,11 @@ public class RoomType {
 		return isAvailable;
 	}
 	
+	/**
+	 * Checks to see if a certain Single King room is available.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if available. False if unavailable.
+	 */
 	private boolean getSingleKingRoom(int selectedRoom) {
 		boolean isAvailable = false;
 		if (singleKingRooms[selectedRoom] == 0) {
@@ -44,6 +65,11 @@ public class RoomType {
 	return isAvailable;
 	}
 	
+	/**
+	 * Checks to see if a certain Kitchen Suite room is available.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if available. False if unavailable.
+	 */
 	private boolean getkitchenSuiteRoom(int selectedRoom) {
 		boolean isAvailable = false;
 		if (kitchenSuiteRooms[selectedRoom] == 0) {
@@ -52,6 +78,11 @@ public class RoomType {
 	return isAvailable;
 	}
 	
+	/**
+	 * Checks to see if a certain Luxury Suite room is available.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if available. False if unavailable.
+	 */
 	private boolean getLuxurySuiteRoom(int selectedRoom) {
 		boolean isAvailable = false;
 		if (luxurySuiteRooms[selectedRoom] == 0) {
@@ -60,6 +91,11 @@ public class RoomType {
 	return isAvailable;
 	}
 	
+	/**
+	 * Sets the room number in the appropriate room type array. This books the room.
+	 * @param room Room number that the user would like to book.
+	 * @return True: if the room is available. False: if the room is not available.
+	 */
 	public boolean setRoom(int room) {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
@@ -79,6 +115,11 @@ public class RoomType {
 		}
 	}
 	
+	/**
+	 * Books a room if it is still available. It books the room number in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean setQueenDoubleRoom(int selectedRoom) {
 		boolean bookRoom = false;
 			if (queenDoubleRooms[selectedRoom] == 0) {
@@ -88,6 +129,11 @@ public class RoomType {
 		return bookRoom;
 	}
 	
+	/**
+	 * Books a room if it is still available. It books the room number in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean setSingleKingRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (singleKingRooms[selectedRoom] == 0) {
@@ -97,6 +143,11 @@ public class RoomType {
 	return bookRoom;
 	}
 	
+	/**
+	 * Books a room if it is still available. It books the room number in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean setkitchenSuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (kitchenSuiteRooms[selectedRoom] == 0) {
@@ -106,6 +157,11 @@ public class RoomType {
 	return bookRoom;
 	}
 	
+	/**
+	 * Books a room if it is still available. It books the room number in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean setLuxurySuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (luxurySuiteRooms[selectedRoom] == 0) {
@@ -115,6 +171,11 @@ public class RoomType {
 	return bookRoom;
 	}
 	
+	/**
+	 * Selects the room and sets the value to show that it is no longer booked. The room number is from the appropriate room type array.
+	 * @param room Room number that the user would like to no longer have booked.
+	 * @return True: if the room is no longer booked. False: if the room was not booked in the first place.
+	 */
 	public boolean deselectRoom(int room) {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
@@ -134,6 +195,11 @@ public class RoomType {
 		}
 	}
 	
+	/**
+	 * Sets a room to a status to show that it is no longer booked. The room number is used in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean deselectQueenDoubleRoom(int selectedRoom) {
 		boolean bookRoom = false;
 			if (queenDoubleRooms[selectedRoom] == 1) {
@@ -143,6 +209,11 @@ public class RoomType {
 		return bookRoom;
 	}
 	
+	/**
+	 * Sets a room to a status to show that it is no longer booked. The room number is used in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean deselectSingleKingRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (singleKingRooms[selectedRoom] == 1) {
@@ -152,6 +223,11 @@ public class RoomType {
 	return bookRoom;
 	}
 	
+	/**
+	 * Sets a room to a status to show that it is no longer booked. The room number is used in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean deselectkitchenSuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (kitchenSuiteRooms[selectedRoom] == 1) {
@@ -161,6 +237,11 @@ public class RoomType {
 	return bookRoom;
 	}
 	
+	/**
+	 * Sets a room to a status to show that it is no longer booked. The room number is used in the given room type.
+	 * @param selectedRoom Room number in the section of room types
+	 * @return True: if successfully booked. False if not booked.
+	 */
 	private boolean deselectLuxurySuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
 		if (luxurySuiteRooms[selectedRoom] == 1) {

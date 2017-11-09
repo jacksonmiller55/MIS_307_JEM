@@ -1,5 +1,12 @@
 import java.util.ArrayList;
 
+/**
+ * Code for Calendar.
+ * @author Jackson Miller
+ * @author Madison Fisher
+ * @author Elias VanHorn
+ *
+ */
 public class Calendar {
 	private final int JANUARY = 31;
 	private final int FEBUARY = 28;
