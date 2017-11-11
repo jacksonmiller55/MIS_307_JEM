@@ -9,7 +9,11 @@ import java.io.IOException;
  * @author Elias VanHorn
  */
 public class HotelManagmentSystem {	
-	public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
+	static int sMonth;
+	static int sDay;
+	static int sRoom;
+	
+	public static void main(String[] args){
 		String selection = null;
 		Scanner input = new Scanner(System.in);
 		boolean firstRun = true;
@@ -32,6 +36,8 @@ public class HotelManagmentSystem {
 				deselctSpecificRoomNumber(year, input);
 			} else if (selection.equals("T")) {
 				bookRoomType(year, input);
+			} else if (selection.equals("C")) {
+				System.out.println("The cost of the room is: $" + checkout(year, input));
 			}
 
 			// Tells the program that this is no longer the first run.
@@ -64,7 +70,8 @@ public class HotelManagmentSystem {
 		System.out.println("(B) Book Specific Room Number");
 		System.out.println("(T) Book Room Type");
 		System.out.println("(D) Deselect Specific Room Number because of error");
-
+		System.out.println("(C) Checkout");
+		
 		selection = input.next();
 
 		while (!correctInput) {
@@ -77,7 +84,7 @@ public class HotelManagmentSystem {
 						"Please enter only the selected character to select the appropriat option. Numbers will not be accepted.");
 				selection = input.next();
 			} else if ((selection.toUpperCase().equals("Q")) || (selection.toUpperCase().equals("B"))
-					|| (selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("T"))) {
+					|| (selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("T")) || (selection.toUpperCase().equals("C"))) {
 				correctInput = true;
 			} else {
 				System.out.println("The Character must match one of the appropriat options.");
@@ -94,25 +101,22 @@ public class HotelManagmentSystem {
 	 * @param input Scanner(System.in);
 	 */
 	public static void bookSpecificRoomNumber(Calendar year, Scanner input) {
-		int month = 0;
-		int day = 0;
-		int room = 100;
+		
+		sMonth = monthInput(input);
 
-		month = monthInput(input, month);
+		sDay = dayInput(input);
 
-		day = dayInput(input, month, day);
-
-		room = roomInput(input, room);
+		sRoom = roomInput(input);
 
 		boolean isRoomAvailable = false;
-		isRoomAvailable = year.checkRoomAvailable(month, day, room);
+		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 
 		if (isRoomAvailable) {
-			year.bookRoom(month, day, room);
-			System.out.printf("Room %d was booked for %d-%d", room, month + 1, day + 1);
+			year.bookRoom(sMonth, sDay, sRoom);
+			System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 
 		} else {
-			System.out.printf("Room %d is unavailable for %d-%d", room, month + 1, day + 1);
+			System.out.printf("Room %d is unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
 		}
 	}
 
@@ -121,26 +125,29 @@ public class HotelManagmentSystem {
 	 * @param year Calendar object. Used to reference month, date, and room number.
 	 * @param input Scanner(System.in);
 	 */
-	public static void deselctSpecificRoomNumber(Calendar year, Scanner input) {
-		int month = 0;
-		int day = 0;
-		int room = 100;
+	public static boolean deselctSpecificRoomNumber(Calendar year, Scanner input) {
 
-		month = monthInput(input, month);
+		sMonth = monthInput(input);
 
-		day = dayInput(input, month, day);
+		sDay = dayInput(input);
 
-		room = roomInput(input, room);
+		sRoom = roomInput(input);
+		
+//		Calendar calendarToReturn = new Calendar(year);
 
 		boolean isRoomAvailable = false;
-		isRoomAvailable = year.checkRoomAvailable(month, day, room);
+		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 
 		if (!isRoomAvailable) {
-			year.unbookRoom(month, day, room);
-			System.out.printf("Room %d was unselected for %d-%d", room, month + 1, day + 1);
+			year.unbookRoom(sMonth, sDay, sRoom);
+			System.out.printf("Room %d was unselected for %d-%d", sRoom, sMonth + 1, sDay + 1);
+			System.out.println();
+			return true;
 
 		} else {
-			System.out.printf("Room %d was not unselected for %d-%d", room, month + 1, day + 1);
+			System.out.printf("Room %d was not unselected for %d-%d", sRoom, sMonth + 1, sDay + 1);
+			System.out.println();
+			return false;
 		}
 	}
 
@@ -150,21 +157,21 @@ public class HotelManagmentSystem {
 	 * @param month Month that the user would like to book.
 	 * @return month number
 	 */
-	public static int monthInput(Scanner input, int month) {
+	public static int monthInput(Scanner input) {
 		System.out.print("Month: ");
 		boolean isOKinput = false;
 
-		month = input.nextInt();
+		sMonth = input.nextInt();
 		while (!isOKinput) {
-			if ((month >= 1) && (month <= 12)) {
-				month -= 1;
+			if ((sMonth >= 1) && (sMonth <= 12)) {
+				sMonth -= 1;
 				isOKinput = true;
 			} else {
 				System.out.println("The month must be between the numbers 1 and 12");
-				month = input.nextInt();
+				sMonth = input.nextInt();
 			}
 		}
-		return month;
+		return sMonth;
 	}
 
 	/**
@@ -174,53 +181,53 @@ public class HotelManagmentSystem {
 	 * @param day The day that the user would like to book.
 	 * @return room number
 	 */
-	public static int dayInput(Scanner input, int month, int day) {
+	public static int dayInput(Scanner input) {
 		System.out.print("Day: ");
 		boolean isOKinput = false;
 
-		day = input.nextInt();
+		sDay = input.nextInt();
 
 		// months with the amount of days to match the arrays
 		// 0,2,4,6,7,9,11 = 31
 		// 1 = 28
 		// 3,5,8,10 =30
 
-		if ((month == 0) && (month == 2) && (month == 4) && (month == 6) && (month == 7) && (month == 9)
-				&& (month == 11)) {
+		if ((sMonth == 0) && (sMonth == 2) && (sMonth == 4) && (sMonth == 6) && (sMonth == 7) && (sMonth == 9)
+				&& (sMonth == 11)) {
 			while (!isOKinput) {
-				if ((day >= 1) && (day <= 31)) {
-					day -= 1;
+				if ((sDay >= 1) && (sDay <= 31)) {
+					sDay -= 1;
 					isOKinput = true;
 				} else {
 					System.out.println("The day must be between the numbers 1 and 31");
-					day = input.nextInt();
+					sDay = input.nextInt();
 				}
 			}
-			return day;
+			return sDay;
 		}
 
-		else if ((month == 3) && (month == 5) && (month == 8) && (month == 10)) {
+		else if ((sMonth == 3) && (sMonth == 5) && (sMonth == 8) && (sMonth == 10)) {
 			while (!isOKinput) {
-				if ((day >= 1) && (day <= 30)) {
-					day -= 1;
+				if ((sDay >= 1) && (sDay <= 30)) {
+					sDay -= 1;
 					isOKinput = true;
 				} else {
 					System.out.println("The day must be between the numbers 1 and 30");
-					day = input.nextInt();
+					sDay = input.nextInt();
 				}
 			}
-			return day;
+			return sDay;
 		} else {
 			while (!isOKinput) {
-				if ((day >= 1) && (day <= 28)) {
-					day -= 1;
+				if ((sDay >= 1) && (sDay <= 28)) {
+					sDay -= 1;
 					isOKinput = true;
 				} else {
 					System.out.println("The day must be between the numbers 1 and 28");
-					day = input.nextInt();
+					sDay = input.nextInt();
 				}
 			}
-			return day;
+			return sDay;
 		}
 	}
 
@@ -230,20 +237,20 @@ public class HotelManagmentSystem {
 	 * @param room
 	 * @return
 	 */
-	public static int roomInput(Scanner input, int room) {
+	public static int roomInput(Scanner input) {
 		System.out.print("Room Number: ");
 		boolean isOKinput = false;
 
-		room = input.nextInt();
+		sRoom = input.nextInt();
 		while (!isOKinput) {
-			if ((room >= 101) && (room <= 152)) {
+			if ((sRoom >= 101) && (sRoom <= 152)) {
 				isOKinput = true;
 			} else {
 				System.out.println("The room number must be between the numbers 101 and 152");
-				room = input.nextInt();
+				sRoom = input.nextInt();
 			}
 		}
-		return room;
+		return sRoom;
 	}
 
 	/**
@@ -254,6 +261,9 @@ public class HotelManagmentSystem {
 	public static void bookRoomType(Calendar year, Scanner input) {
 		String selection = null;
 		boolean correctInput = false;
+		
+		sMonth = monthInput(input);
+		sDay = dayInput(input);
 
 		System.out.println("What type of room would you like to book?");
 		System.out.println("(D)ouble Queen");
@@ -280,86 +290,84 @@ public class HotelManagmentSystem {
 				selection = input.next();
 			}
 		}
-		int month = 0;
-		int day = 0;
 
 		if (selection.equals("D")) {
 			System.out.println("You have selected Queen Double");
-			month = monthInput(input, month);
-			day = dayInput(input, month, day);
 
-			int room = 101;
+			sRoom = 101;
 			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (room <= 120)) {
-				isRoomAvailable = year.checkRoomAvailable(month, day, room);
-				room += 1;
+			while ((!isRoomAvailable) && (sRoom <= 120)) {
+				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
+				sRoom += 1;
 			}
-			if ((room == 121) && (!isRoomAvailable)) {
+			if ((sRoom == 121) && (!isRoomAvailable)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
-				room -= 1;
-				year.bookRoom(month, day, room);
-				System.out.printf("Room %d was booked for %d-%d", room, month + 1, day + 1);
+				sRoom -= 1;
+				year.bookRoom(sMonth, sDay, sRoom);
+				System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			}
 
 		} else if (selection.equals("S")) {
 			System.out.println("You have selected Single King");
-			month = monthInput(input, month);
-			day = dayInput(input, month, day);
 
-			int room = 121;
+			sRoom = 121;
 			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (room <= 140)) {
-				isRoomAvailable = year.checkRoomAvailable(month, day, room);
-				room += 1;
+			while ((!isRoomAvailable) && (sRoom <= 140)) {
+				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
+				sRoom += 1;
 			}
-			if ((room == 141) && (!isRoomAvailable)) {
+			if ((sRoom == 141) && (!isRoomAvailable)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
-				room -= 1;
-				year.bookRoom(month, day, room);
-				System.out.printf("Room %d was booked for %d-%d", room, month + 1, day + 1);
+				sRoom -= 1;
+				year.bookRoom(sMonth, sDay, sRoom);
+				System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			}
 
 		} else if (selection.equals("K")) {
 			System.out.println("You have selected Kitchen Suite");
-			month = monthInput(input, month);
-			day = dayInput(input, month, day);
 
-			int room = 141;
+			sRoom= 141;
 			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (room <= 150)) {
-				isRoomAvailable = year.checkRoomAvailable(month, day, room);
-				room += 1;
+			while ((!isRoomAvailable) && (sRoom <= 150)) {
+				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
+				sRoom += 1;
 			}
-			if ((room == 151) && (!isRoomAvailable)) {
+			if ((sRoom == 151) && (!isRoomAvailable)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
-				room -= 1;
-				year.bookRoom(month, day, room);
-				System.out.printf("Room %d was booked for %d-%d", room, month + 1, day + 1);
+				sRoom -= 1;
+				year.bookRoom(sMonth, sDay, sRoom);
+				System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			}
 
 		} else if (selection.equals("L")) {
 			System.out.println("You have selected Luxury Suite");
-			month = monthInput(input, month);
-			day = dayInput(input, month, day);
 
-			int room = 151;
+			sRoom = 151;
 			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (room <= 152)) {
-				isRoomAvailable = year.checkRoomAvailable(month, day, room);
-				room += 1;
+			while ((!isRoomAvailable) && (sRoom <= 152)) {
+				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
+				sRoom += 1;
 			}
-			if ((room == 153) && (!isRoomAvailable)) {
+			if ((sRoom == 153) && (!isRoomAvailable)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
-				room -= 1;
-				year.bookRoom(month, day, room);
-				System.out.printf("Room %d was booked for %d-%d", room, month + 1, day + 1);
+				sRoom -= 1;
+				year.bookRoom(sMonth, sDay, sRoom);
+				System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			}
 
 		}
 
+	}
+	public static double checkout (Calendar year, Scanner input) {
+		if (deselctSpecificRoomNumber(year, input)) {
+			return year.checkout(sMonth, sDay, sRoom);
+		}
+		else {
+			return 0;
+		}
 	}
 }

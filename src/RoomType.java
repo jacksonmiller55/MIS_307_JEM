@@ -250,4 +250,27 @@ public class RoomType {
 		}
 	return bookRoom;
 	}
+	
+	public double getRoomPrice(int room) {
+		room -= 101;
+		if ((room >= 0) && (room < 20)) {
+			//Double Queen
+			return 129.99;
+		}
+		else if((room >= 20) && (room <= 40)) {
+			room -=20;
+			//Single King
+			return 139.99;
+		}
+		else if((room >= 40) && (room < 50)) {
+			room-=40;
+			//Kitchenette Suite
+			return 159.99;
+		}
+		else {
+			room-=50;
+			//Luxury Suite
+			return 199.99;
+		}
+	}
 }

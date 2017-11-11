@@ -164,4 +164,7 @@ public class Calendar {
 			return roomSelected;
 		}
 	}
+	public double checkout(int month, int day, int room) {
+		return Months.get(month).get(day).getRoomPrice(room);
+	}
 }
