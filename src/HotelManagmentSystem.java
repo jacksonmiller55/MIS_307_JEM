@@ -6,7 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 /**
- * Code for HotelManagementSystem
+ * Code for HotelManagementSystem This class provides the main interface that
+ * the user interacts with in order to select a room number and date that they
+ * would like to book, check to see if it is vacant, deselect, or check out.
+ * 
+ * @date 11/20/2017
  * 
  * @author Jackson Miller
  * @author Madison Fisher
@@ -52,8 +56,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Loads the saved data from "save.txt". Inserts the booked rooms into a new Calendar object.
-	 * Creates a new Calendar object if no data is loaded in.
+	 * Loads the saved data from "save.txt". Inserts the booked rooms into a new
+	 * Calendar object. Creates a new Calendar object if no data is loaded in.
 	 * 
 	 * @return new Calendar year.
 	 */
@@ -80,8 +84,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Quits the program and saves the all of the room states if they are booked or not.
-	 * Rooms are saved in the file "save.text".
+	 * Quits the program and saves the all of the room states if they are booked or
+	 * not. Rooms are saved in the file "save.text".
 	 * 
 	 * @return False quit the program.
 	 */
@@ -309,7 +313,8 @@ public class HotelManagmentSystem {
 	 * 
 	 * @param input
 	 *            Scanner(System.in);
-	 * @param room room that the user would like to select.
+	 * @param room
+	 *            room that the user would like to select.
 	 * @return room number.
 	 */
 	public static int roomInput(Scanner input) {
@@ -442,69 +447,73 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Checks the user out of the room and creates a that adds up the extra expenses and price of the room. 
+	 * Checks the user out of the room and creates a that adds up the extra expenses
+	 * and price of the room.
 	 * 
-	 * @param year (Calendar) year that contains booked and unbooked rooms.
-	 * @param input (Scanner) that takes in user input for room to checkout.
+	 * @param year
+	 *            (Calendar) year that contains booked and unbooked rooms.
+	 * @param input
+	 *            (Scanner) that takes in user input for room to checkout.
 	 * @return Total price of room to checkout.
 	 */
-	public static double checkout (Calendar year, Scanner input) {
+	public static double checkout(Calendar year, Scanner input) {
 		double roomPrice = year.getRoomPrice(sMonth, sDay, sRoom);
 		if (deselctSpecificRoomNumber(year, input)) {
-			double totalPrice = roomPrice + calculateOtherExpenses(year,input);
+			double totalPrice = roomPrice + calculateOtherExpenses(year, input);
 			System.out.println("Room Price: \t\t\t\t" + roomPrice);
 			System.out.println("Total Price: \t\t\t\t" + totalPrice);
 			return totalPrice;
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}
 
 	/**
-	 * Calculates the cost of additional expenses including the number of movies rented and the mini bar items.
+	 * Calculates the cost of additional expenses including the number of movies
+	 * rented and the mini bar items.
 	 * 
-	 * @param year (Calendar) object that contains the booked and unbooked rooms.
-	 * @param input (Scanner) that takes in the number of movies and items that were taken from the mini bar.
+	 * @param year
+	 *            (Calendar) object that contains the booked and unbooked rooms.
+	 * @param input
+	 *            (Scanner) that takes in the number of movies and items that were
+	 *            taken from the mini bar.
 	 * @return calculated additional expenses from movies and the mini bar.
 	 */
 	public static double calculateOtherExpenses(Calendar year, Scanner input) {
 		int nummberOfMovies = 0;
 		int numberOfMiniBarItems = 0;
 		double moviePrices = 0.0;
-		double miniBarPrices =0.0;
-		
+		double miniBarPrices = 0.0;
+
 		System.out.print("Number of movies watched: ");
 		boolean isOKinput = false;
 		while (!isOKinput) {
 			try {
-			 nummberOfMovies = input.nextInt();
-			 isOKinput = true;
-			 moviePrices = nummberOfMovies * 10;
-			}
-			catch (InputMismatchException e) {
+				nummberOfMovies = input.nextInt();
+				isOKinput = true;
+				moviePrices = nummberOfMovies * 10;
+			} catch (InputMismatchException e) {
 				System.out.println("Input must be an integer.");
 				break;
 			}
 		}
-		
+
 		isOKinput = false;
 		System.out.print("Number of Mini bar items taken: ");
 		while (!isOKinput) {
 			try {
-			 numberOfMiniBarItems = input.nextInt();
-			 isOKinput = true;
-			 miniBarPrices = numberOfMiniBarItems * 5;
-			}
-			catch (InputMismatchException e) {
+				numberOfMiniBarItems = input.nextInt();
+				isOKinput = true;
+				miniBarPrices = numberOfMiniBarItems * 5;
+			} catch (InputMismatchException e) {
 				System.out.println("Input must be an integer.");
 				break;
 			}
-			
+
 		}
 		System.out.println();
 		System.out.println("Movies: \t\t " + nummberOfMovies + " * $10.00 = " + "\t" + moviePrices);
-		System.out.println("Mini bar Items:  \t " + numberOfMiniBarItems + " * $5.00 = " + "\t"+ miniBarPrices);
+		System.out.println("Mini bar Items:  \t " + numberOfMiniBarItems + " * $5.00 = " + "\t" + miniBarPrices);
 		return moviePrices + miniBarPrices;
 	}
 }
