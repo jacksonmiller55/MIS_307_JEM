@@ -1,24 +1,28 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.sql.SQLException;
-import java.io.IOException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 
 /**
  * Code for HotelManagementSystem
+ * 
  * @author Jackson Miller
  * @author Madison Fisher
  * @author Elias VanHorn
  */
-public class HotelManagmentSystem {	
+public class HotelManagmentSystem {
 	static int sMonth;
 	static int sDay;
 	static int sRoom;
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		String selection = null;
 		Scanner input = new Scanner(System.in);
 		boolean firstRun = true;
 		boolean continueToRun = true;
-		Calendar year = new Calendar();
+		Calendar year = loadData();
 
 		while (continueToRun) {
 			// Adds 2 lines for spacing after the first time the program is run.
@@ -29,7 +33,7 @@ public class HotelManagmentSystem {
 			selection = printSelectionOptions(input);
 
 			if (selection.equals("Q")) {
-				continueToRun = quitProgram();
+				continueToRun = quitProgram(year);
 			} else if (selection.equals("B")) {
 				bookSpecificRoomNumber(year, input);
 			} else if (selection.equals("D")) {
@@ -37,7 +41,7 @@ public class HotelManagmentSystem {
 			} else if (selection.equals("T")) {
 				bookRoomType(year, input);
 			} else if (selection.equals("C")) {
-				System.out.println("The cost of the room is: $" + checkout(year, input));
+				checkout(year, input);
 			}
 
 			// Tells the program that this is no longer the first run.
@@ -47,18 +51,74 @@ public class HotelManagmentSystem {
 
 	}
 
-	/** 
-	 * Quits the program.
-	 * @return False quit the program.
+	/**
+	 * Loads the saved data from "save.txt". Inserts the booked rooms into a new Calendar object.
+	 * Creates a new Calendar object if no data is loaded in.
+	 * 
+	 * @return new Calendar year.
 	 */
-	public static boolean quitProgram() {
-		System.out.println("You have quit the program.");
-		return false;
+	private static Calendar loadData() {
+		Calendar year = new Calendar();
+		File save = new File("src\\save.txt");
+		try {
+			Scanner load = new Scanner(save);
+			while (load.hasNextLine()) {
+				sMonth = load.nextInt();
+				sDay = load.nextInt();
+				sRoom = load.nextInt();
+				String isBooked = load.next();
+
+				if (isBooked.trim().equals("B")) {
+					year.bookRoom(sMonth, sDay, sRoom);
+				}
+			}
+			return year;
+
+		} catch (FileNotFoundException e) {
+			return year;
+		}
 	}
 
 	/**
-	 * Prints a selection of the items for the user to choose. User selects the option of their choice.
-	 * @param input Scanner(System.in);
+	 * Quits the program and saves the all of the room states if they are booked or not.
+	 * Rooms are saved in the file "save.text".
+	 * 
+	 * @return False quit the program.
+	 */
+	public static boolean quitProgram(Calendar year) {
+		System.out.println("You have quit the program.");
+
+		File save = new File("src\\save.txt");
+		try {
+			PrintWriter out = new PrintWriter(save);
+			for (int month = 0; month < 12; month++) {
+				for (int day = 0; day < year.getNumDays(month); day++) {
+					for (int room = 101; room < 153; room++) {
+						if (year.checkRoomAvailable(month, day, room)) {
+							out.print(month + "\t" + day + "\t" + room + "\t" + "A");
+						} else if (!year.checkRoomAvailable(month, day, room)) {
+							out.print(month + "\t" + day + "\t" + room + "\t" + "B");
+						}
+						if (!(month == 11 && day == 30 && room == 152)) {
+							out.println();
+						}
+					}
+				}
+			}
+			out.close();
+			return false;
+		} catch (FileNotFoundException e) {
+			System.out.println("Print writer did not output to a file.");
+			return true;
+		}
+	}
+
+	/**
+	 * Prints a selection of the items for the user to choose. User selects the
+	 * option of their choice.
+	 * 
+	 * @param input
+	 *            Scanner(System.in);
 	 * @return Character selection.
 	 */
 	public static String printSelectionOptions(Scanner input) {
@@ -71,7 +131,7 @@ public class HotelManagmentSystem {
 		System.out.println("(T) Book Room Type");
 		System.out.println("(D) Deselect Specific Room Number because of error");
 		System.out.println("(C) Checkout");
-		
+
 		selection = input.next();
 
 		while (!correctInput) {
@@ -84,7 +144,8 @@ public class HotelManagmentSystem {
 						"Please enter only the selected character to select the appropriat option. Numbers will not be accepted.");
 				selection = input.next();
 			} else if ((selection.toUpperCase().equals("Q")) || (selection.toUpperCase().equals("B"))
-					|| (selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("T")) || (selection.toUpperCase().equals("C"))) {
+					|| (selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("T"))
+					|| (selection.toUpperCase().equals("C"))) {
 				correctInput = true;
 			} else {
 				System.out.println("The Character must match one of the appropriat options.");
@@ -94,14 +155,16 @@ public class HotelManagmentSystem {
 		return selection.toUpperCase();
 	}
 
-	
 	/**
 	 * Books a specific room number for the given month, date, and room number.
-	 * @param year Calendar object. Used to reference month, date, and room number.
-	 * @param input Scanner(System.in);
+	 * 
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner(System.in);
 	 */
 	public static void bookSpecificRoomNumber(Calendar year, Scanner input) {
-		
+
 		sMonth = monthInput(input);
 
 		sDay = dayInput(input);
@@ -120,10 +183,13 @@ public class HotelManagmentSystem {
 		}
 	}
 
-	/** 
+	/**
 	 * Allows the user to de-select a room so that it is available to book.
-	 * @param year Calendar object. Used to reference month, date, and room number.
-	 * @param input Scanner(System.in);
+	 * 
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner(System.in);
 	 */
 	public static boolean deselctSpecificRoomNumber(Calendar year, Scanner input) {
 
@@ -132,8 +198,8 @@ public class HotelManagmentSystem {
 		sDay = dayInput(input);
 
 		sRoom = roomInput(input);
-		
-//		Calendar calendarToReturn = new Calendar(year);
+
+		// Calendar calendarToReturn = new Calendar(year);
 
 		boolean isRoomAvailable = false;
 		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
@@ -153,8 +219,11 @@ public class HotelManagmentSystem {
 
 	/**
 	 * Gets the user input for the month that the user would like to book.
-	 * @param input Scanner(System.in);
-	 * @param month Month that the user would like to book.
+	 * 
+	 * @param input
+	 *            Scanner(System.in);
+	 * @param month
+	 *            Month that the user would like to book.
 	 * @return month number
 	 */
 	public static int monthInput(Scanner input) {
@@ -176,9 +245,13 @@ public class HotelManagmentSystem {
 
 	/**
 	 * Gets the user input for the day that the user would like to book.
-	 * @param input Scanner(System.in);
-	 * @param month The month that the user would like to book.
-	 * @param day The day that the user would like to book.
+	 * 
+	 * @param input
+	 *            Scanner(System.in);
+	 * @param month
+	 *            The month that the user would like to book.
+	 * @param day
+	 *            The day that the user would like to book.
 	 * @return room number
 	 */
 	public static int dayInput(Scanner input) {
@@ -232,10 +305,12 @@ public class HotelManagmentSystem {
 	}
 
 	/**
+	 * Gets the room input from the user.
 	 * 
-	 * @param input Scanner(System.in);
-	 * @param room
-	 * @return
+	 * @param input
+	 *            Scanner(System.in);
+	 * @param room room that the user would like to select.
+	 * @return room number.
 	 */
 	public static int roomInput(Scanner input) {
 		System.out.print("Room Number: ");
@@ -255,13 +330,16 @@ public class HotelManagmentSystem {
 
 	/**
 	 * Gets the user input for the room that the user would like to book.
-	 * @param year Calendar object. Used to reference month, date, and room number.
-	 * @param input Scanner(System.in);s
+	 * 
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner(System.in);s
 	 */
 	public static void bookRoomType(Calendar year, Scanner input) {
 		String selection = null;
 		boolean correctInput = false;
-		
+
 		sMonth = monthInput(input);
 		sDay = dayInput(input);
 
@@ -328,7 +406,7 @@ public class HotelManagmentSystem {
 		} else if (selection.equals("K")) {
 			System.out.println("You have selected Kitchen Suite");
 
-			sRoom= 141;
+			sRoom = 141;
 			boolean isRoomAvailable = false;
 			while ((!isRoomAvailable) && (sRoom <= 150)) {
 				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
@@ -362,12 +440,71 @@ public class HotelManagmentSystem {
 		}
 
 	}
+
+	/**
+	 * Checks the user out of the room and creates a that adds up the extra expenses and price of the room. 
+	 * 
+	 * @param year (Calendar) year that contains booked and unbooked rooms.
+	 * @param input (Scanner) that takes in user input for room to checkout.
+	 * @return Total price of room to checkout.
+	 */
 	public static double checkout (Calendar year, Scanner input) {
+		double roomPrice = year.getRoomPrice(sMonth, sDay, sRoom);
 		if (deselctSpecificRoomNumber(year, input)) {
-			return year.checkout(sMonth, sDay, sRoom);
+			double totalPrice = roomPrice + calculateOtherExpenses(year,input);
+			System.out.println("Room Price: \t\t\t\t" + roomPrice);
+			System.out.println("Total Price: \t\t\t\t" + totalPrice);
+			return totalPrice;
 		}
 		else {
 			return 0;
 		}
+	}
+
+	/**
+	 * Calculates the cost of additional expenses including the number of movies rented and the mini bar items.
+	 * 
+	 * @param year (Calendar) object that contains the booked and unbooked rooms.
+	 * @param input (Scanner) that takes in the number of movies and items that were taken from the mini bar.
+	 * @return calculated additional expenses from movies and the mini bar.
+	 */
+	public static double calculateOtherExpenses(Calendar year, Scanner input) {
+		int nummberOfMovies = 0;
+		int numberOfMiniBarItems = 0;
+		double moviePrices = 0.0;
+		double miniBarPrices =0.0;
+		
+		System.out.print("Number of movies watched: ");
+		boolean isOKinput = false;
+		while (!isOKinput) {
+			try {
+			 nummberOfMovies = input.nextInt();
+			 isOKinput = true;
+			 moviePrices = nummberOfMovies * 10;
+			}
+			catch (InputMismatchException e) {
+				System.out.println("Input must be an integer.");
+				break;
+			}
+		}
+		
+		isOKinput = false;
+		System.out.print("Number of Mini bar items taken: ");
+		while (!isOKinput) {
+			try {
+			 numberOfMiniBarItems = input.nextInt();
+			 isOKinput = true;
+			 miniBarPrices = numberOfMiniBarItems * 5;
+			}
+			catch (InputMismatchException e) {
+				System.out.println("Input must be an integer.");
+				break;
+			}
+			
+		}
+		System.out.println();
+		System.out.println("Movies: \t\t " + nummberOfMovies + " * $10.00 = " + "\t" + moviePrices);
+		System.out.println("Mini bar Items:  \t " + numberOfMiniBarItems + " * $5.00 = " + "\t"+ miniBarPrices);
+		return moviePrices + miniBarPrices;
 	}
 }

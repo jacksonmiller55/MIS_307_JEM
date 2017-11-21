@@ -10,10 +10,10 @@ public class RoomType {
 	private final int SINGLE_KING = 20;
 	private final int KITCHEN_SUITE = 10;
 	private final int LUXURY_SUITE = 2;
-	private int [] queenDoubleRooms = new int [QUEEN_DOUBLE];
-	private int [] singleKingRooms = new int [SINGLE_KING];
-	private int [] kitchenSuiteRooms = new int [KITCHEN_SUITE];
-	private int [] luxurySuiteRooms = new int [LUXURY_SUITE];
+	private double [] queenDoubleRooms = new double [QUEEN_DOUBLE];
+	private double [] singleKingRooms = new double [SINGLE_KING];
+	private double [] kitchenSuiteRooms = new double [KITCHEN_SUITE];
+	private double [] luxurySuiteRooms = new double [LUXURY_SUITE];
 	
 	/**
 	 * Gets the room number from the appropriate room type array.
@@ -92,11 +92,11 @@ public class RoomType {
 	}
 	
 	/**
-	 * Sets the room number in the appropriate room type array. This books the room.
+	 * Sets the room price in the appropriate room type array. This books the room.
 	 * @param room Room number that the user would like to book.
-	 * @return True: if the room is available. False: if the room is not available.
+	 * @return The price of the room is available.
 	 */
-	public boolean setRoom(int room) {
+	public double setRoom(int room) {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
 			return setQueenDoubleRoom(room);
@@ -116,59 +116,51 @@ public class RoomType {
 	}
 	
 	/**
-	 * Books a room if it is still available. It books the room number in the given room type.
+	 * Books a room if it is still available and sets the price. It books the room number in the given room type.
 	 * @param selectedRoom Room number in the section of room types
-	 * @return True: if successfully booked. False if not booked.
+	 * @return Price of the room that is booked.
 	 */
-	private boolean setQueenDoubleRoom(int selectedRoom) {
-		boolean bookRoom = false;
+	private double setQueenDoubleRoom(int selectedRoom) {
 			if (queenDoubleRooms[selectedRoom] == 0) {
-				queenDoubleRooms[selectedRoom] = 1;
-				bookRoom = true;
+				queenDoubleRooms[selectedRoom] = 129.99;
 			}
-		return bookRoom;
+		return queenDoubleRooms[selectedRoom];
 	}
 	
 	/**
-	 * Books a room if it is still available. It books the room number in the given room type.
+	 * Books a room if it is still available and sets the price. It books the room number in the given room type.
 	 * @param selectedRoom Room number in the section of room types
-	 * @return True: if successfully booked. False if not booked.
+	 * @return Price of the room that is booked.
 	 */
-	private boolean setSingleKingRoom(int selectedRoom) {
-		boolean bookRoom = false;
+	private double setSingleKingRoom(int selectedRoom) {
 		if (singleKingRooms[selectedRoom] == 0) {
-			singleKingRooms[selectedRoom] = 1;
-			bookRoom = true;
+			singleKingRooms[selectedRoom] = 139.99;
 		}
-	return bookRoom;
+	return singleKingRooms[selectedRoom];
 	}
 	
 	/**
-	 * Books a room if it is still available. It books the room number in the given room type.
+	 * Books a room if it is still available and sets the price. It books the room number in the given room type.
 	 * @param selectedRoom Room number in the section of room types
-	 * @return True: if successfully booked. False if not booked.
+	 * @return Price of the room that is booked.
 	 */
-	private boolean setkitchenSuiteRoom(int selectedRoom) {
-		boolean bookRoom = false;
+	private double setkitchenSuiteRoom(int selectedRoom) {
 		if (kitchenSuiteRooms[selectedRoom] == 0) {
-			kitchenSuiteRooms[selectedRoom] = 1;
-			bookRoom = true;
+			kitchenSuiteRooms[selectedRoom] = 159.99;
 		}
-	return bookRoom;
+	return kitchenSuiteRooms[selectedRoom];
 	}
 	
 	/**
-	 * Books a room if it is still available. It books the room number in the given room type.
+	 * Books a room if it is still available and sets the price. It books the room number in the given room type.
 	 * @param selectedRoom Room number in the section of room types
-	 * @return True: if successfully booked. False if not booked.
+	 * @return Price of the room that is booked.
 	 */
-	private boolean setLuxurySuiteRoom(int selectedRoom) {
-		boolean bookRoom = false;
+	private double setLuxurySuiteRoom(int selectedRoom) {
 		if (luxurySuiteRooms[selectedRoom] == 0) {
-			luxurySuiteRooms[selectedRoom] = 1;
-			bookRoom = true;
+			luxurySuiteRooms[selectedRoom] = 199.99;
 		}
-	return bookRoom;
+	return luxurySuiteRooms[selectedRoom];
 	}
 	
 	/**
@@ -202,7 +194,7 @@ public class RoomType {
 	 */
 	private boolean deselectQueenDoubleRoom(int selectedRoom) {
 		boolean bookRoom = false;
-			if (queenDoubleRooms[selectedRoom] == 1) {
+			if (queenDoubleRooms[selectedRoom] != 0) {
 				queenDoubleRooms[selectedRoom] = 0;
 				bookRoom = true;
 			}
@@ -216,7 +208,7 @@ public class RoomType {
 	 */
 	private boolean deselectSingleKingRoom(int selectedRoom) {
 		boolean bookRoom = false;
-		if (singleKingRooms[selectedRoom] == 1) {
+		if (singleKingRooms[selectedRoom] != 0) {
 			singleKingRooms[selectedRoom] = 0;
 			bookRoom = true;
 		}
@@ -230,7 +222,7 @@ public class RoomType {
 	 */
 	private boolean deselectkitchenSuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
-		if (kitchenSuiteRooms[selectedRoom] == 1) {
+		if (kitchenSuiteRooms[selectedRoom] != 0) {
 			kitchenSuiteRooms[selectedRoom] = 0;
 			bookRoom = true;
 		}
@@ -244,33 +236,75 @@ public class RoomType {
 	 */
 	private boolean deselectLuxurySuiteRoom(int selectedRoom) {
 		boolean bookRoom = false;
-		if (luxurySuiteRooms[selectedRoom] == 1) {
+		if (luxurySuiteRooms[selectedRoom] !=0) {
 			luxurySuiteRooms[selectedRoom] = 0;
 			bookRoom = true;
 		}
 	return bookRoom;
 	}
 	
+	/**
+	 * Gets the price of the room.
+	 * 
+	 * @param room The selected room to check the price.
+	 * @return price of the room.
+	 */
 	public double getRoomPrice(int room) {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
-			//Double Queen
-			return 129.99;
+			return getQueenDoubleRoomPrice(room);
 		}
 		else if((room >= 20) && (room <= 40)) {
 			room -=20;
-			//Single King
-			return 139.99;
+			return getSingleKingRoomPrice(room);
 		}
 		else if((room >= 40) && (room < 50)) {
 			room-=40;
-			//Kitchenette Suite
-			return 159.99;
+			return getKitchenSuiteRoomPrice(room);
 		}
 		else {
 			room-=50;
-			//Luxury Suite
-			return 199.99;
+			return getLuxurySuiteRoomPrice(room);
 		}
+	}
+	
+	/**
+	 * Gets the price of the selected Double Queen room.
+	 * 
+	 * @param selectedRoom Room selected to check the price.
+	 * @return The price of the selected Double Queen room.
+	 */
+	public double getQueenDoubleRoomPrice(int selectedRoom) {
+		return queenDoubleRooms[selectedRoom];
+	}
+	
+	/**
+	 * Gets the price of the selected Single King room.
+	 * 
+	 * @param selectedRoom Room selected to check the price.
+	 * @return The price of the selected Single King room.
+	 */
+	public double getSingleKingRoomPrice(int selectedRoom) {
+		return singleKingRooms[selectedRoom];
+	}
+	
+	/**
+	 * Gets the price of the selected Kitchen Suite room.
+	 * 
+	 * @param selectedRoom Room selected to check the price.
+	 * @return The price of the selected Kitchen Suite room.
+	 */
+	public double getKitchenSuiteRoomPrice(int selectedRoom) {
+		return kitchenSuiteRooms[selectedRoom];
+	}
+	
+	/**
+	 * Gets the price of the selected Luxury Suite Room.
+	 * 
+	 * @param selectedRoom Room selected to check the price.
+	 * @return The price of the Luxury Suite Room.
+	 */
+	public double getLuxurySuiteRoomPrice(int selectedRoom) {
+		return luxurySuiteRooms[selectedRoom];
 	}
 }

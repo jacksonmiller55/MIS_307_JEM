@@ -12,10 +12,12 @@ public class Calendar {
 	private final int FEBUARY = 28;
 	private final int MARCH = 31;
 	private final int APRIL = 30;
+	///////////////////////////
 	private final int MAY = 31;
 	private final int JUNE = 30;
 	private final int JULY = 31;
 	private final int AUGUST = 31;
+	////////////////////////////
 	private final int SEPTEMBER = 30;
 	private final int OCTOBER = 31;
 	private final int NOVEMBER = 30;
@@ -131,17 +133,17 @@ public class Calendar {
 	 * @return (boolean) returns if room is booked or not.
 	 */
 	public boolean bookRoom(int month, int day, int room) {
-		boolean roomSelected = Months.get(month).get(day).setRoom(room);
-		if (roomSelected) {
-			return roomSelected;
+		double roomSelected = Months.get(month).get(day).setRoom(room);
+		if (roomSelected == 0) {
+			return true;
 		}
 		else{
-			return roomSelected;
+			return false;
 		}
 	}
 	
 	/**
-	 * unbooks the room for the given month, day and room.
+	 * Unbooks the room for the given month, day and room.
 	 * 
 	 * @param month (int) Equals actual -1) Ranges from 0 - 11. Month selected to unbook.
 	 * @param day (int) (Equals actual -1) Ranges from 0 - 30, 0 - 29, or 0 - 27 depending on the Calendar month. Day to be unbooked.
@@ -164,7 +166,63 @@ public class Calendar {
 			return roomSelected;
 		}
 	}
-	public double checkout(int month, int day, int room) {
+	
+	/**
+	 * Gets the price of the room.
+	 * 
+	 * @param month (int) Equals actual -1) Ranges from 0 - 11. Month selected to get the price of the room.
+	 * @param day (int) (Equals actual -1) Ranges from 0 - 30, 0 - 29, or 0 - 27 depending on the Calendar month. Day selected to get the price of the room.
+	 * @param room (int) Ranges from 101 to 152. Room selected to get price of room.
+	 * @return (double) price of room.
+	 */
+	public double getRoomPrice(int month, int day, int room) {
 		return Months.get(month).get(day).getRoomPrice(room);
+		
+	}
+	
+	
+	/**
+	 * Returns the number of days in a selected month.
+	 * 
+	 * @param month (int) month selected to return the number of days for that month,=.
+	 * @return (int) the number of days in a selected month.
+	 */
+	public int getNumDays(int month) {
+		if (month == 0) {
+			return 31;
+		}
+		else if(month == 1) {
+			return 28;
+		}
+		else if(month == 2) {
+			return 31;
+		}
+		else if(month == 3) {
+			return 30;
+		}
+		//////////////////////
+		else if(month == 4) {
+			return 31;
+		}
+		else if(month == 5) {
+			return 30;
+		}
+		else if(month == 6) {
+			return 31;
+		}
+		else if(month == 7) {
+			return 31;
+		}
+		/////////////////////
+		else if(month == 8) {
+			return 30;
+		}
+		else if(month == 9) {
+			return 31;
+		}
+		else if(month == 10) {
+			return 30;
+		}
+		else return 31;
 	}
 }
