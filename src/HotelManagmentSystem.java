@@ -1,8 +1,12 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-
+import java.awt.Desktop;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -46,6 +50,10 @@ public class HotelManagmentSystem {
 				bookRoomType(year, input);
 			} else if (selection.equals("C")) {
 				checkout(year, input);
+			} else if (selection.equals("M")) {
+				roomCleaned(year, input);
+			}else if (selection.equals("L")) {
+				listOfRoomsToBeCleaned(year, input);
 			}
 
 			// Tells the program that this is no longer the first run.
@@ -65,6 +73,7 @@ public class HotelManagmentSystem {
 		Calendar year = new Calendar();
 		File save = new File("src\\save.txt");
 		try {
+			@SuppressWarnings("resource")
 			Scanner load = new Scanner(save);
 			while (load.hasNextLine()) {
 				sMonth = load.nextInt();
@@ -74,6 +83,9 @@ public class HotelManagmentSystem {
 
 				if (isBooked.trim().equals("B")) {
 					year.bookRoom(sMonth, sDay, sRoom);
+				}
+				if (isBooked.trim().equals("D")) {
+					year.dirtyRoom(sMonth, sDay, sRoom);
 				}
 			}
 			return year;
@@ -91,16 +103,21 @@ public class HotelManagmentSystem {
 	 */
 	public static boolean quitProgram(Calendar year) {
 		System.out.println("You have quit the program.");
-
+		return save(year);
+	}
+	public static boolean save(Calendar year) {
 		File save = new File("src\\save.txt");
 		try {
 			PrintWriter out = new PrintWriter(save);
 			for (int month = 0; month < 12; month++) {
 				for (int day = 0; day < year.getNumDays(month); day++) {
 					for (int room = 101; room < 153; room++) {
-						if (year.checkRoomAvailable(month, day, room)) {
+						if (year.checkRoomAvailable(month, day, room) == 0) {
 							out.print(month + "\t" + day + "\t" + room + "\t" + "A");
-						} else if (!year.checkRoomAvailable(month, day, room)) {
+						} else if (year.checkRoomAvailable(month, day, room) == -1) {
+							out.print(month + "\t" + day + "\t" + room + "\t" + "D");
+						}
+						else{
 							out.print(month + "\t" + day + "\t" + room + "\t" + "B");
 						}
 						if (!(month == 11 && day == 30 && room == 152)) {
@@ -134,6 +151,8 @@ public class HotelManagmentSystem {
 		System.out.println("(B) Book Specific Room Number");
 		System.out.println("(T) Book Room Type");
 		System.out.println("(D) Deselect Specific Room Number because of error");
+		System.out.println("(M) Maintenance reporting clean room");
+		System.out.println("(L) List of rooms that need cleaned");
 		System.out.println("(C) Checkout");
 
 		selection = input.next();
@@ -149,7 +168,8 @@ public class HotelManagmentSystem {
 				selection = input.next();
 			} else if ((selection.toUpperCase().equals("Q")) || (selection.toUpperCase().equals("B"))
 					|| (selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("T"))
-					|| (selection.toUpperCase().equals("C"))) {
+					|| (selection.toUpperCase().equals("C")) || (selection.toUpperCase().equals("M"))
+					|| (selection.toUpperCase().equals("L"))) {
 				correctInput = true;
 			} else {
 				System.out.println("The Character must match one of the appropriat options.");
@@ -175,16 +195,19 @@ public class HotelManagmentSystem {
 
 		sRoom = roomInput(input);
 
-		boolean isRoomAvailable = false;
+		double isRoomAvailable;
 		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 
-		if (isRoomAvailable) {
+		if (isRoomAvailable == 0) {
 			year.bookRoom(sMonth, sDay, sRoom);
 			System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 
-		} else {
-			System.out.printf("Room %d is unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
+		} else if (isRoomAvailable == -1) {
+			System.out.printf("Room %d is still dirty for %d-%d", sRoom, sMonth + 1, sDay + 1);
+		}else{
+			System.out.printf("Room %d currently booked and unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
 		}
+		save(year);
 	}
 
 	/**
@@ -205,20 +228,27 @@ public class HotelManagmentSystem {
 
 		// Calendar calendarToReturn = new Calendar(year);
 
-		boolean isRoomAvailable = false;
+		double isRoomAvailable;
 		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 
-		if (!isRoomAvailable) {
+		if (isRoomAvailable == -1) {
+			System.out.printf("Room %d cannot be unselected it is still dirty for %d-%d please select a different room and day", sRoom, sMonth + 1, sDay + 1);
+			System.out.println();
+			return false;
+		}if (isRoomAvailable == 0) {
+			year.unbookRoom(sMonth, sDay, sRoom);
+			System.out.printf("Room %d not unselected because it was not previously booked for %d-%d please select a different room and day", sRoom, sMonth + 1, sDay + 1);
+			System.out.println();
+			save(year);
+			return true;
+		} else {
 			year.unbookRoom(sMonth, sDay, sRoom);
 			System.out.printf("Room %d was unselected for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			System.out.println();
+			save(year);
 			return true;
-
-		} else {
-			System.out.printf("Room %d was not unselected for %d-%d", sRoom, sMonth + 1, sDay + 1);
-			System.out.println();
-			return false;
 		}
+		
 	}
 
 	/**
@@ -233,18 +263,26 @@ public class HotelManagmentSystem {
 	public static int monthInput(Scanner input) {
 		System.out.print("Month: ");
 		boolean isOKinput = false;
-
-		sMonth = input.nextInt();
+		
+		String enteredText = input.next();
 		while (!isOKinput) {
-			if ((sMonth >= 1) && (sMonth <= 12)) {
-				sMonth -= 1;
-				isOKinput = true;
-			} else {
+			if(isNumber(enteredText)) {
+				sMonth = Integer.parseInt(enteredText);
+			
+				if ((sMonth >= 1) && (sMonth <= 12)) {
+					sMonth -= 1;
+					isOKinput = true;
+				} else {
+					System.out.println("The month must be between the numbers 1 and 12");
+					enteredText = input.next();
+				}
+			}else {
 				System.out.println("The month must be between the numbers 1 and 12");
-				sMonth = input.nextInt();
+				enteredText = input.next();
 			}
 		}
 		return sMonth;
+		
 	}
 
 	/**
@@ -259,49 +297,66 @@ public class HotelManagmentSystem {
 	 * @return room number
 	 */
 	public static int dayInput(Scanner input) {
-		System.out.print("Day: ");
-		boolean isOKinput = false;
-
-		sDay = input.nextInt();
-
 		// months with the amount of days to match the arrays
 		// 0,2,4,6,7,9,11 = 31
 		// 1 = 28
 		// 3,5,8,10 =30
+		
+		System.out.print("Day: ");
+		boolean isOKinput = false;
 
 		if ((sMonth == 0) && (sMonth == 2) && (sMonth == 4) && (sMonth == 6) && (sMonth == 7) && (sMonth == 9)
 				&& (sMonth == 11)) {
+			String enteredText = input.next();
 			while (!isOKinput) {
-				if ((sDay >= 1) && (sDay <= 31)) {
-					sDay -= 1;
-					isOKinput = true;
+				if(isNumber(enteredText)) {
+					sDay= Integer.parseInt(enteredText);
+					if ((sDay >= 1) && (sDay <= 31)) {
+						sDay -= 1;
+						isOKinput = true;
+					} else {
+						System.out.println("The day must be between the numbers 1 and 31");
+						enteredText = input.next();
+					}
 				} else {
 					System.out.println("The day must be between the numbers 1 and 31");
-					sDay = input.nextInt();
+					enteredText = input.next();
 				}
 			}
 			return sDay;
-		}
-
-		else if ((sMonth == 3) && (sMonth == 5) && (sMonth == 8) && (sMonth == 10)) {
+		}else if ((sMonth == 3) && (sMonth == 5) && (sMonth == 8) && (sMonth == 10)) {
+			String enteredText = input.next();
 			while (!isOKinput) {
-				if ((sDay >= 1) && (sDay <= 30)) {
-					sDay -= 1;
-					isOKinput = true;
+				if(isNumber(enteredText)) {
+					sDay= Integer.parseInt(enteredText);
+					if ((sDay >= 1) && (sDay <= 30)) {
+						sDay -= 1;
+						isOKinput = true;
+					}else {
+						System.out.println("The day must be between the numbers 1 and 30");
+						enteredText = input.next();
+					}
 				} else {
 					System.out.println("The day must be between the numbers 1 and 30");
-					sDay = input.nextInt();
+					enteredText = input.next();
 				}
 			}
 			return sDay;
 		} else {
+			String enteredText = input.next();
 			while (!isOKinput) {
-				if ((sDay >= 1) && (sDay <= 28)) {
-					sDay -= 1;
-					isOKinput = true;
+				if(isNumber(enteredText)) {
+					sDay= Integer.parseInt(enteredText);
+					if ((sDay >= 1) && (sDay <= 28)) {
+						sDay -= 1;
+						isOKinput = true;
+					}else {
+						System.out.println("The day must be between the numbers 1 and 28");
+						enteredText = input.next();
+					}
 				} else {
 					System.out.println("The day must be between the numbers 1 and 28");
-					sDay = input.nextInt();
+					enteredText = input.next();
 				}
 			}
 			return sDay;
@@ -321,25 +376,48 @@ public class HotelManagmentSystem {
 		System.out.print("Room Number: ");
 		boolean isOKinput = false;
 
-		sRoom = input.nextInt();
+		String enteredText = input.next();
 		while (!isOKinput) {
-			if ((sRoom >= 101) && (sRoom <= 152)) {
-				isOKinput = true;
+			if(isNumber(enteredText)) {
+				sRoom = Integer.parseInt(enteredText);
+				if ((sRoom >= 101) && (sRoom <= 152)) {
+					isOKinput = true;
+				}else {
+					System.out.println("The room number must be between the numbers 101 and 152");
+					enteredText = input.next();
+				}
 			} else {
 				System.out.println("The room number must be between the numbers 101 and 152");
-				sRoom = input.nextInt();
+				enteredText = input.next();
 			}
 		}
 		return sRoom;
 	}
 
 	/**
+	 * @param text
+	 * @return
+	 */
+	public static boolean isNumber(String text) {
+		boolean isaNumber = false;
+		for(int i = 0;i<text.length();i++){
+            char index =text.charAt(i);
+            if(Character.isDigit(index)){
+                isaNumber = true;
+            }else{
+            	isaNumber=false;
+            }
+        }
+        return isaNumber;
+	}
+	
+	/**
 	 * Gets the user input for the room that the user would like to book.
 	 * 
 	 * @param year
 	 *            Calendar object. Used to reference month, date, and room number.
 	 * @param input
-	 *            Scanner(System.in);s
+	 *            Scanner(System.in)
 	 */
 	public static void bookRoomType(Calendar year, Scanner input) {
 		String selection = null;
@@ -378,12 +456,12 @@ public class HotelManagmentSystem {
 			System.out.println("You have selected Queen Double");
 
 			sRoom = 101;
-			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (sRoom <= 120)) {
+			double isRoomAvailable = Double.MAX_VALUE;
+			while ((isRoomAvailable != 0) && (sRoom <= 120)) {
 				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 				sRoom += 1;
 			}
-			if ((sRoom == 121) && (!isRoomAvailable)) {
+			if ((sRoom == 121) && (isRoomAvailable !=0)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
 				sRoom -= 1;
@@ -395,12 +473,12 @@ public class HotelManagmentSystem {
 			System.out.println("You have selected Single King");
 
 			sRoom = 121;
-			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (sRoom <= 140)) {
+			double isRoomAvailable = Double.MAX_VALUE;
+			while ((isRoomAvailable !=0) && (sRoom <= 140)) {
 				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 				sRoom += 1;
 			}
-			if ((sRoom == 141) && (!isRoomAvailable)) {
+			if ((sRoom == 141) && (isRoomAvailable !=0)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
 				sRoom -= 1;
@@ -412,12 +490,12 @@ public class HotelManagmentSystem {
 			System.out.println("You have selected Kitchen Suite");
 
 			sRoom = 141;
-			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (sRoom <= 150)) {
+			double isRoomAvailable = Double.MAX_VALUE;
+			while ((isRoomAvailable !=0) && (sRoom <= 150)) {
 				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 				sRoom += 1;
 			}
-			if ((sRoom == 151) && (!isRoomAvailable)) {
+			if ((sRoom == 151) && (isRoomAvailable != 0)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
 				sRoom -= 1;
@@ -429,12 +507,12 @@ public class HotelManagmentSystem {
 			System.out.println("You have selected Luxury Suite");
 
 			sRoom = 151;
-			boolean isRoomAvailable = false;
-			while ((!isRoomAvailable) && (sRoom <= 152)) {
+			double isRoomAvailable = Double.MAX_VALUE;
+			while ((isRoomAvailable !=0) && (sRoom <= 152)) {
 				isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
 				sRoom += 1;
 			}
-			if ((sRoom == 153) && (!isRoomAvailable)) {
+			if ((sRoom == 153) && (isRoomAvailable != 0)) {
 				System.out.println("There are no rooms of this style available.");
 			} else {
 				sRoom -= 1;
@@ -443,7 +521,41 @@ public class HotelManagmentSystem {
 			}
 
 		}
+		save(year);
 
+	}
+	
+	/**
+	 * Sets room in a dirty state to show that it needs cleaning.
+	 * 
+	 * @param year Calendar object. Used to reference month, date, and room number.
+	 * @param input Scanner(System.in)
+	 * @return true is the room is successfully set to a dirty state. false if still set to clean.
+	 */
+	public static boolean needsRoomCleaning(Calendar year, Scanner input) {
+
+		double isRoomAvailable;
+		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
+
+		if (isRoomAvailable == -1) {
+			System.out.printf("Error: Room %d was already set for cleaning for %d-%d", sRoom, sMonth + 1, sDay + 1);
+			System.out.println();
+			return false;
+
+		}
+		if (isRoomAvailable == 0) {
+			year.dirtyRoom(sMonth, sDay, sRoom);
+			System.out.printf("Error: Room %d was not set for cleaning for %d-%d because it is not dirty.", sRoom, sMonth + 1, sDay + 1);
+			System.out.println();
+			return false;
+		}
+		else {
+			year.dirtyRoom(sMonth, sDay, sRoom);
+			System.out.printf("Room %d was set for cleaning for %d-%d", sRoom, sMonth + 1, sDay + 1);
+			System.out.println();
+			save(year);
+			return true;
+		}
 	}
 
 	/**
@@ -457,11 +569,18 @@ public class HotelManagmentSystem {
 	 * @return Total price of room to checkout.
 	 */
 	public static double checkout(Calendar year, Scanner input) {
+		sMonth = monthInput(input);
+
+		sDay = dayInput(input);
+
+		sRoom = roomInput(input);
+		
 		double roomPrice = year.getRoomPrice(sMonth, sDay, sRoom);
-		if (deselctSpecificRoomNumber(year, input)) {
-			double totalPrice = roomPrice + calculateOtherExpenses(year, input);
+		if (needsRoomCleaning(year, input)) {
+			double totalPrice = roomPrice + calculateOtherExpenses(year, input, roomPrice);
 			System.out.println("Room Price: \t\t\t\t" + roomPrice);
 			System.out.println("Total Price: \t\t\t\t" + totalPrice);
+			save(year);
 			return totalPrice;
 		} else {
 			return 0;
@@ -479,8 +598,8 @@ public class HotelManagmentSystem {
 	 *            taken from the mini bar.
 	 * @return calculated additional expenses from movies and the mini bar.
 	 */
-	public static double calculateOtherExpenses(Calendar year, Scanner input) {
-		int nummberOfMovies = 0;
+	public static double calculateOtherExpenses(Calendar year, Scanner input, double roomPrice) {
+		int numberOfMovies = 0;
 		int numberOfMiniBarItems = 0;
 		double moviePrices = 0.0;
 		double miniBarPrices = 0.0;
@@ -489,9 +608,8 @@ public class HotelManagmentSystem {
 		boolean isOKinput = false;
 		while (!isOKinput) {
 			try {
-				nummberOfMovies = input.nextInt();
+				numberOfMovies = input.nextInt();
 				isOKinput = true;
-				moviePrices = nummberOfMovies * 10;
 			} catch (InputMismatchException e) {
 				System.out.println("Input must be an integer.");
 				break;
@@ -504,16 +622,198 @@ public class HotelManagmentSystem {
 			try {
 				numberOfMiniBarItems = input.nextInt();
 				isOKinput = true;
-				miniBarPrices = numberOfMiniBarItems * 5;
 			} catch (InputMismatchException e) {
 				System.out.println("Input must be an integer.");
 				break;
 			}
+		}
+		
+		moviePrices = numberOfMovies * 10;
+		miniBarPrices = numberOfMiniBarItems * 5;
+		System.out.println();
+		System.out.println("Movies: \t\t " + numberOfMovies + " * $10.00 = " + "\t" + moviePrices);
+		System.out.println("Mini bar Items:  \t " + numberOfMiniBarItems + " * $5.00 = " + "\t" + miniBarPrices);
+		double totalPrice = moviePrices + miniBarPrices + roomPrice;
+		printReciept(numberOfMovies, numberOfMiniBarItems,roomPrice, totalPrice);
+		save(year);
+		return moviePrices + miniBarPrices;
+	}
+	
+	public static void printReciept(int numberOfMovies, int numberOfMiniBarItems,double roomPrice, double totalPrice) {
+		int room = sRoom+1;
+		int day = sDay+1;
+		int month = sDay+1;
+		double moviePrices;
+		double miniBarPrices;
+		moviePrices = numberOfMovies * 10;
+		miniBarPrices = numberOfMiniBarItems * 5;
+		
+		File reciept = new File("src\\reciept.html");
+		FileWriter fstream = null;
+		
+		StringBuilder recieptBuilder = new StringBuilder();
+		recieptBuilder.append("<html style=\"background-color:beige;\">");
+		recieptBuilder.append("<head>");
+		recieptBuilder.append("<title>Reciept</title>");
+		recieptBuilder.append("</u>");
+		recieptBuilder.append("</head>");
+		recieptBuilder.append("<body>");
+		recieptBuilder.append("<center>");
+		recieptBuilder.append("<h1 style=\"color:darkred; font-style: italic; font-size: 40\"; >Thank you for staying with us.</h1>");
+		recieptBuilder.append("<u>");
+		recieptBuilder.append("<h2 style=\"font-weight: 800; font-family:sans-serif;\">Reciept</h2>");
+		recieptBuilder.append("</u>");
+		recieptBuilder.append("<h2 style=\"color:darkred;font-family:sans-serif;\">Room: "+ room + "  Date: "+ month + "\\"+ day + "\\2017</h2>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\">Movies</h3>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<h4 style=\"font-family:sans-serif;\"> Number Watched: " + numberOfMovies + "* $10.00 = $"+ moviePrices+"</h4>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\">Mini Bar Items</h3>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<h4 style=\"font-family:sans-serif;\"> Number of Mini Bar Items: "+numberOfMiniBarItems+" * $5.00 = $"+miniBarPrices +"0 </h4>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\";>Room charge</h3>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<h4 style=\"font-family:sans-serif;\">Amount: $" + roomPrice + "</h4>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<u>");
+		recieptBuilder.append("<h3 style=\"color:darkred; font-weight:900; font-family:sans-serif;\">Total due:</h3>");
+		recieptBuilder.append("<div>");
+		recieptBuilder.append("<h4 style=\"color:darkred; font-weight: 900;font-family:sans-serif;\">$"+totalPrice+"</h4>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("</u>");
+		recieptBuilder.append("</div>");
+		recieptBuilder.append("</center>");
+		recieptBuilder.append("</body>");		
+		recieptBuilder.append("</html>");
 
+		
+	    
+	    try {
+	    	fstream = new FileWriter(reciept);
+		    BufferedWriter out = new BufferedWriter(fstream);
+	    	out.write(recieptBuilder.toString());
+		    out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    try {
+			Desktop.getDesktop().browse(reciept.toURI());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+		System.out.println();
+		System.out.println("Movies: \t\t " + numberOfMovies + " * $10.00 = " + "\t" + moviePrices);
+		System.out.println("Mini bar Items:  \t " + numberOfMiniBarItems + " * $5.00 = " + "\t" + miniBarPrices);
+		
+	}
+	
+	/**
+	 * Books a specific room number for the given month, date, and room number.
+	 * 
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner(System.in);
+	 */
+	public static void roomCleaned(Calendar year, Scanner input) {
+
+		sMonth = monthInput(input);
+
+		sDay = dayInput(input);
+
+		sRoom = roomInput(input);
+
+		double isRoomAvailable;
+		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
+
+		if (isRoomAvailable == -1) {
+			year.cleanRoom(sMonth, sDay, sRoom);
+			System.out.printf("Room %d was cleaned for %d-%d", sRoom, sMonth + 1, sDay + 1);
+
+		} else if (isRoomAvailable == 0) {
+			System.out.printf("Room %d is already clean and available to be booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
+		}else{
+			System.out.printf("Room %d currently booked and unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
+		}
+		save(year);
+	}
+	
+	public static void listOfRoomsToBeCleaned(Calendar year, Scanner input) {
+		
+		sMonth = monthInput(input);
+
+		sDay = dayInput(input);
+		
+		int month = sMonth+1;
+		int day = sDay+1;
+		
+		ArrayList<Integer> dirtyRooms = new ArrayList<Integer>();
+		
+		for (int room = 101; room < 153; room++) {
+			if (year.checkRoomAvailable(sMonth, sDay, room) == -1) {
+				dirtyRooms.add(room);
+			}
+		}
+		
+		File cleaningList = new File("src\\cleaningList.html");
+		FileWriter fstream = null;
+		
+		StringBuilder cleaningListBuilder = new StringBuilder();
+		cleaningListBuilder.append("<html style=\"background-color:beige;\">");
+		cleaningListBuilder.append("<head>");
+		cleaningListBuilder.append("<title>Maintenance List</title>");
+		cleaningListBuilder.append("</head>");
+		cleaningListBuilder.append("<body>");
+		cleaningListBuilder.append("<center>");
+		cleaningListBuilder.append("<u>");
+		cleaningListBuilder.append("<h1 style=\"color:darkred; font-style: italic; font-size: 40\"; >Maintenance List</h1>");
+		cleaningListBuilder.append("</u>");
+		cleaningListBuilder.append("<h2 style=\"font-weight: 800; font-family:sans-serif;\">Dirty Rooms</h2>");
+		cleaningListBuilder.append("<h2 style=\"color:darkred;font-family:sans-serif;\">Date: " + month + "\\" + day+ "\\2017</h2>");
+		cleaningListBuilder.append("<div>");
+		
+		for (int j = 0; j < dirtyRooms.size(); j++) {
+			cleaningListBuilder.append("<h4 style=\"font-family:sans-serif;\"> Room: "+ dirtyRooms.get(j) +" </h4>");
+		}
+		
+		cleaningListBuilder.append("</div>");
+		cleaningListBuilder.append("<div>");
+		cleaningListBuilder.append("<u>");
+		cleaningListBuilder.append("<h3 style=\"color:darkred; font-weight:900; font-family:sans-serif;\">Please clean as soon as possible.</h3>");
+		cleaningListBuilder.append("</u>");
+		cleaningListBuilder.append("</div>");
+		cleaningListBuilder.append("</center>");
+		cleaningListBuilder.append("</body>");
+		cleaningListBuilder.append("</html>");
+	    
+	    try {
+	    	fstream = new FileWriter(cleaningList);
+		    BufferedWriter out = new BufferedWriter(fstream);
+	    	out.write(cleaningListBuilder.toString());
+		    out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    try {
+			Desktop.getDesktop().browse(cleaningList.toURI());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		System.out.println();
-		System.out.println("Movies: \t\t " + nummberOfMovies + " * $10.00 = " + "\t" + moviePrices);
-		System.out.println("Mini bar Items:  \t " + numberOfMiniBarItems + " * $5.00 = " + "\t" + miniBarPrices);
-		return moviePrices + miniBarPrices;
+		save(year);
 	}
 }

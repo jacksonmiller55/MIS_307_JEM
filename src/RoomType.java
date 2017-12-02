@@ -20,13 +20,13 @@ public class RoomType {
 	private double[] luxurySuiteRooms = new double[LUXURY_SUITE];
 
 	/**
-	 * Gets the room number from the appropriate room type array.
+	 * Gets the room number and the state of the room from the appropriate room type array.
 	 * 
 	 * @param room
-	 *            Room number that the user would like to book.
-	 * @return True: if the room is available. False: if the room is not available.
+	 *            Room number that the user would check the status of.
+	 * @return The state of the room.
 	 */
-	public boolean getRoom(int room) {
+	public double getRoom(int room) {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
 			return getQueenDoubleRoom(room);
@@ -43,65 +43,49 @@ public class RoomType {
 	}
 
 	/**
-	 * Checks to see if a certain Double Queen room is available.
+	 * Checks  the availability of a certain Double Queen room.
 	 * 
 	 * @param selectedRoom
 	 *            Room number in the section of room types
-	 * @return True: if available. False if unavailable.
+	 * @return The state of the room.
 	 */
-	private boolean getQueenDoubleRoom(int selectedRoom) {
-		boolean isAvailable = false;
-		if (queenDoubleRooms[selectedRoom] == 0) {
-			isAvailable = true;
-		}
-		return isAvailable;
+	private double getQueenDoubleRoom(int selectedRoom) {
+		return queenDoubleRooms[selectedRoom];
 	}
 
 	/**
-	 * Checks to see if a certain Single King room is available.
+	 * Checks  the availability of a certain Single King room.
 	 * 
 	 * @param selectedRoom
 	 *            Room number in the section of room types
-	 * @return True: if available. False if unavailable.
+	 * @return The state of the room.
 	 */
-	private boolean getSingleKingRoom(int selectedRoom) {
-		boolean isAvailable = false;
-		if (singleKingRooms[selectedRoom] == 0) {
-			isAvailable = true;
-		}
-		return isAvailable;
+	private double getSingleKingRoom(int selectedRoom) {
+		return singleKingRooms[selectedRoom];
 	}
 
 	/**
-	 * Checks to see if a certain Kitchen Suite room is available.
+	 * Checks  the availability of a certain Kitchen Suite room.
 	 * 
 	 * @param selectedRoom
 	 *            Room number in the section of room types
-	 * @return True: if available. False if unavailable.
+	 * @return The state of the room.
 	 */
-	private boolean getkitchenSuiteRoom(int selectedRoom) {
-		boolean isAvailable = false;
-		if (kitchenSuiteRooms[selectedRoom] == 0) {
-			isAvailable = true;
-		}
-		return isAvailable;
+	private double getkitchenSuiteRoom(int selectedRoom) {
+		return kitchenSuiteRooms[selectedRoom];
 	}
 
 	/**
-	 * Checks to see if a certain Luxury Suite room is available.
+	 * Checks  the availability of a certain Luxury Suite room.
 	 * 
 	 * @param selectedRoom
 	 *            Room number in the section of room types
-	 * @return True: if available. False if unavailable.
+	 * @return The state of the room.
 	 */
-	private boolean getLuxurySuiteRoom(int selectedRoom) {
-		boolean isAvailable = false;
-		if (luxurySuiteRooms[selectedRoom] == 0) {
-			isAvailable = true;
-		}
-		return isAvailable;
+	private double getLuxurySuiteRoom(int selectedRoom) {
+		return luxurySuiteRooms[selectedRoom];
 	}
-
+////////////////////////
 	/**
 	 * Sets the room price in the appropriate room type array. This books the room.
 	 * 
@@ -198,7 +182,7 @@ public class RoomType {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
 			return deselectQueenDoubleRoom(room);
-		} else if ((room >= 20) && (room <= 40)) {
+		} else if ((room >= 20) && (room < 40)) {
 			room -= 20;
 			return deselectSingleKingRoom(room);
 		} else if ((room >= 40) && (room < 50)) {
@@ -289,7 +273,7 @@ public class RoomType {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
 			return getQueenDoubleRoomPrice(room);
-		} else if ((room >= 20) && (room <= 40)) {
+		} else if ((room >= 20) && (room < 40)) {
 			room -= 20;
 			return getSingleKingRoomPrice(room);
 		} else if ((room >= 40) && (room < 50)) {
@@ -343,5 +327,142 @@ public class RoomType {
 	 */
 	public double getLuxurySuiteRoomPrice(int selectedRoom) {
 		return luxurySuiteRooms[selectedRoom];
+	}
+
+	//////////DIRTY//////////
+	/**
+	 * Sets the room price to -1 in the appropriate room type array. This sets the room to a dirty state.
+	 * 
+	 * @param room
+	 *            Room number that the user would like to set to dirty.
+	 * @return -1 to show that the room is dirty.
+	 */
+	public double setDirtyRoom(int room) {
+		room -= 101;
+		if ((room >= 0) && (room < 20)) {
+			return setDirtyQueenDoubleRoom(room);
+		} else if ((room >= 20) && (room < 40)) {
+			room -= 20;
+			return setDirtySingleKingRoom(room);
+		} else if ((room >= 40) && (room < 50)) {
+			room -= 40;
+			return setDirtykitchenSuiteRoom(room);
+		} else {
+			room -= 50;
+			return setDirtyLuxurySuiteRoom(room);
+		}
+	}
+
+	/**
+	 * Sets the room -1 to show that it is dirty in the given room type array.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types
+	 * @return -1 to show that the room is dirty.
+	 */
+	private double setDirtyQueenDoubleRoom(int selectedRoom) {
+		return queenDoubleRooms[selectedRoom] = -1;
+	}
+
+	/**
+	 * Sets the room -1 to show that it is dirty in the given room type array.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types
+	 * @return -1 to show that the room is dirty.
+	 */
+	private double setDirtySingleKingRoom(int selectedRoom) {
+		return singleKingRooms[selectedRoom] = -1;
+	}
+
+	/**
+	 * Sets the room -1 to show that it is dirty in the given room type array.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types
+	 * @return -1 to show that the room is dirty.
+	 */
+	private double setDirtykitchenSuiteRoom(int selectedRoom) {
+		return kitchenSuiteRooms[selectedRoom] = -1;
+	}
+
+	/**
+	 * Sets the room -1 to show that it is dirty in the given room type array.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types
+	 * @return -1 to show that the room is dirty.
+	 */
+	private double setDirtyLuxurySuiteRoom(int selectedRoom) {
+		return luxurySuiteRooms[selectedRoom] = -1;
+	}
+	
+	/**
+	 * Sets the room to clean in the appropriate room type array. This sets the room to a clean state.
+	 * 
+	 * @param room
+	 *            Room number that the user would like to set to clean.
+	 * @return Clean room state for the room selected.
+	 */
+	public double setCleanRoom(int room) {
+		room -= 101;
+		if ((room >= 0) && (room < 20)) {
+			return setCleanQueenDoubleRoom(room);
+		} else if ((room >= 20) && (room < 40)) {
+			room -= 20;
+			return setCleanSingleKingRoom(room);
+		} else if ((room >= 40) && (room < 50)) {
+			room -= 40;
+			return setCleankitchenSuiteRoom(room);
+		} else {
+			room -= 50;
+			return setCleanLuxurySuiteRoom(room);
+		}
+	}
+
+	/**
+	 * Sets the room to clean in the appropriate room type array. This sets the room to a clean state.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types that they would like to set to clean.
+	 * @return Clean room state for the room selected.
+	 */
+	private double setCleanQueenDoubleRoom(int selectedRoom) {
+		return queenDoubleRooms[selectedRoom] = 0;
+		
+	}
+
+	/**
+	 * Sets the room to clean in the appropriate room type array. This sets the room to a clean state.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types that they would like to set to clean.
+	 * @return Clean room state for the room selected.
+	 */
+	private double setCleanSingleKingRoom(int selectedRoom) {
+		return singleKingRooms[selectedRoom] = 0;
+			
+	}
+
+	/**
+	 * Sets the room to clean in the appropriate room type array. This sets the room to a clean state.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types that they would like to set to clean.
+	 * @return Clean room state for the room selected.
+	 */
+	private double setCleankitchenSuiteRoom(int selectedRoom) {
+		return kitchenSuiteRooms[selectedRoom] = 0;
+	}
+
+	/**
+	 * Sets the room to clean in the appropriate room type array. This sets the room to a clean state.
+	 * 
+	 * @param selectedRoom
+	 *            Room number in the section of room types that they would like to set to clean.
+	 * @return Clean room state for the room selected.
+	 */
+	private double setCleanLuxurySuiteRoom(int selectedRoom) {
+		return luxurySuiteRooms[selectedRoom] = 0;
 	}
 }

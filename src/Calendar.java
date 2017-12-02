@@ -123,15 +123,11 @@ public class Calendar {
 	 *            depending on the Calendar month. Day to be booked.
 	 * @param room
 	 *            (int) Ranges from 101 to 152. Room selected to be booked.
-	 * @return (boolean) returns the availability of the room
+	 * @return -1 if dirty, price of room if booked, 0 if available
 	 */
-	public boolean checkRoomAvailable(int month, int day, int room) {
-		boolean roomSelected = Months.get(month).get(day).getRoom(room);
-		if (roomSelected) {
-			return roomSelected;
-		} else {
-			return roomSelected;
-		}
+	public double checkRoomAvailable(int month, int day, int room) {
+		return Months.get(month).get(day).getRoom(room);
+		
 	}
 
 	/**
@@ -241,5 +237,50 @@ public class Calendar {
 			return 30;
 		} else
 			return 31;
+	}
+	
+	/**
+	 * Unbooks the room for the given month, day, and room. It sets it to a dirty state.
+	 * 
+	 * @param month
+	 *            (int) Equals actual -1) Ranges from 0 - 11. Month selected to be set to
+	 *            dirty.
+	 * @param day
+	 *            (int) (Equals actual -1) Ranges from 0 - 30, 0 - 29, or 0 - 27
+	 *            depending on the Calendar month. Day to be set to dirty.
+	 * @param room
+	 *            (int) Ranges from 101 to 152. Room selected to be set to dirty.
+	 * @return (boolean) returns true if room is set to dirty or false if not set to dirty.
+	 */
+	public boolean dirtyRoom(int month, int day, int room) {
+		boolean isDirty = true;
+		double dirtyRoom= Months.get(month).get(day).setDirtyRoom(room);
+		if (dirtyRoom == -1) {
+			return isDirty;
+		} else {
+			return !isDirty;
+		}
+	}
+	
+	/**
+	 * Sets the room to a clean state for the given month, day and room.
+	 * 
+	 * @param month
+	 *            (int) Equals actual -1) Ranges from 0 - 11. Month selected to
+	 *            book.
+	 * @param day
+	 *            (int) (Equals actual -1) Ranges from 0 - 30, 0 - 29, or 0 - 27
+	 *            depending on the Calendar month. Day to be booked.
+	 * @param room
+	 *            (int) Ranges from 101 to 152. Room selected to be booked.
+	 * @return (boolean) returns true if the room is set to clean.
+	 */
+	public boolean cleanRoom(int month, int day, int room) {
+		double roomSelected = Months.get(month).get(day).setCleanRoom(room);
+		if (roomSelected == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
