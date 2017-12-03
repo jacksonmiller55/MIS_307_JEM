@@ -30,10 +30,11 @@ public class HotelManagmentSystem {
 		String selection = null;
 		Scanner input = new Scanner(System.in);
 		boolean firstRun = true;
-		boolean continueToRun = true;
+		boolean continueToRun = false;
 		Calendar year = loadData();
+		AccountsRecievable annualCharges = loadRecordedRoomCharges();
 
-		while (continueToRun) {
+		while (!continueToRun) {
 			// Adds 2 lines for spacing after the first time the program is run.
 			if (!firstRun) {
 				System.out.println();
@@ -42,7 +43,7 @@ public class HotelManagmentSystem {
 			selection = printSelectionOptions(input);
 
 			if (selection.equals("Q")) {
-				continueToRun = quitProgram(year);
+				continueToRun = quitProgram(year,annualCharges);
 			} else if (selection.equals("B")) {
 				bookSpecificRoomNumber(year, input);
 			} else if (selection.equals("D")) {
@@ -50,7 +51,7 @@ public class HotelManagmentSystem {
 			} else if (selection.equals("T")) {
 				bookRoomType(year, input);
 			} else if (selection.equals("C")) {
-				checkout(year, input);
+				checkout(year, input, annualCharges);
 			} else if (selection.equals("M")) {
 				roomCleaned(year, input);
 			} else if (selection.equals("L")) {
@@ -74,10 +75,10 @@ public class HotelManagmentSystem {
 	 */
 	private static Calendar loadData() {
 		Calendar year = new Calendar();
-		File save = new File("src\\save.txt");
+		File saveRooms = new File("src\\save.txt");
 		try {
 			@SuppressWarnings("resource")
-			Scanner load = new Scanner(save);
+			Scanner load = new Scanner(saveRooms);
 			while (load.hasNextLine()) {
 				sMonth = load.nextInt();
 				sDay = load.nextInt();
@@ -97,6 +98,32 @@ public class HotelManagmentSystem {
 			return year;
 		}
 	}
+/////
+	/**
+	 * Loads the saved data from "save.txt". Inserts the booked rooms into a new
+	 * Calendar object. Creates a new Calendar object if no data is loaded in.
+	 * 
+	 * @return new AccountsRecievable annualCharges.
+	 */
+	private static AccountsRecievable loadRecordedRoomCharges() {
+		AccountsRecievable annualCharges = new AccountsRecievable();
+		File save = new File("src\\annualCharges.txt");
+		try {
+			@SuppressWarnings("resource")
+			Scanner load = new Scanner(save);
+			while (load.hasNextLine()) {
+				sMonth = load.nextInt();
+				sDay = load.nextInt();
+				sRoom = load.nextInt();
+				double charge= load.nextDouble();
+				annualCharges.setChargesForRoom(sMonth, sDay, sRoom, charge);
+			}
+			return annualCharges;
+
+		} catch (FileNotFoundException e) {
+			return annualCharges;
+		}
+	}
 
 	/**
 	 * Quits the program and saves the all of the room states if they are booked or
@@ -104,13 +131,17 @@ public class HotelManagmentSystem {
 	 * 
 	 * @return False quit the program.
 	 */
-	public static boolean quitProgram(Calendar year) {
+	public static boolean quitProgram(Calendar year, AccountsRecievable annualCharges) {
 		System.out.println("You have quit the program.");
-		return save(year);
+		return (saveRooms(year) &&(saveAnnualCharges(annualCharges)));
 	}
 
-	public static boolean save(Calendar year) {
-		File save = new File("src\\save.txt");
+	/**
+	 * @param year
+	 * @return
+	 */
+	public static boolean saveRooms(Calendar year) {
+		File save = new File("src\\roomsBooked.txt");
 		try {
 			PrintWriter out = new PrintWriter(save);
 			for (int month = 0; month < 12; month++) {
@@ -130,10 +161,43 @@ public class HotelManagmentSystem {
 				}
 			}
 			out.close();
-			return false;
-		} catch (FileNotFoundException e) {
-			System.out.println("Print writer did not output to a file.");
+			
 			return true;
+		} catch (FileNotFoundException e) {
+			System.out.println("Print writer did not output to a file for the calendar.");
+			return false;
+		}
+	}
+	
+	/**
+	 * @param annualCharges
+	 * @return
+	 */
+	public static boolean saveAnnualCharges(AccountsRecievable annualCharges) {
+		File save = new File("src\\annualCharges.txt");
+		try {
+			PrintWriter out = new PrintWriter(save);
+			for (int month = 0; month < 12; month++) {
+				for (int day = 0; day < annualCharges.getNumDays(month); day++) {
+					for (int room = 101; room < 153; room++) {
+						double charge = annualCharges.getChargesForRoom(month, day, room);
+						if (charge == 0) {
+							out.print(month + "\t" + day + "\t" + room + "\t" + charge);
+						} else if (charge != 0) {
+							out.print(month + "\t" + day + "\t" + room + "\t" + charge);
+						}
+						if (!(month == 11 && day == 30 && room == 152)) {
+							out.println();
+						}
+					}
+				}
+			}
+			out.close();
+			
+			return true;
+		} catch (FileNotFoundException e) {
+			System.out.println("Print writer did not output to a file for the annual charges.");
+			return false;
 		}
 	}
 
@@ -204,6 +268,7 @@ public class HotelManagmentSystem {
 
 		if (isRoomAvailable == 0) {
 			year.bookRoom(sMonth, sDay, sRoom);
+			
 			System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 
 		} else if (isRoomAvailable == -1) {
@@ -211,7 +276,7 @@ public class HotelManagmentSystem {
 		} else {
 			System.out.printf("Room %d currently booked and unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
 		}
-		save(year);
+		saveRooms(year);
 	}
 
 	/**
@@ -248,13 +313,13 @@ public class HotelManagmentSystem {
 					"Room %d not unselected because it was not previously booked for %d-%d please select a different room and day",
 					sRoom, sMonth + 1, sDay + 1);
 			System.out.println();
-			save(year);
+			saveRooms(year);
 			return true;
 		} else {
 			year.unbookRoom(sMonth, sDay, sRoom);
 			System.out.printf("Room %d was unselected for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			System.out.println();
-			save(year);
+			saveRooms(year);
 			return true;
 		}
 
@@ -530,7 +595,7 @@ public class HotelManagmentSystem {
 			}
 
 		}
-		save(year);
+		saveRooms(year);
 
 	}
 
@@ -544,7 +609,7 @@ public class HotelManagmentSystem {
 	 *            (Scanner) that takes in user input for room to checkout.
 	 * @return Total price of room to checkout.
 	 */
-	public static double checkout(Calendar year, Scanner input) {
+	public static double checkout(Calendar year, Scanner input, AccountsRecievable annualCharges) {
 		int numberOfMovies = 0;
 		int numberOfMiniBarItems = 0;
 		double moviePrices = 0.0;
@@ -611,8 +676,9 @@ public class HotelManagmentSystem {
 			System.out.println("Total Price: \t\t\t\t\t" + totalPriceAfterTax);
 			System.out.println("_______________________________________________________");
 			printReciept(numberOfMovies, numberOfMiniBarItems, roomPrice, totalPriceBeforeTax, tax, totalPriceAfterTax);
-			save(year);
-
+			
+			saveRooms(year);
+			annualCharges.setChargesForRoom(sMonth, sDay, sRoom, totalPriceAfterTax);
 			return totalPriceAfterTax;
 		} else
 			return 0;
@@ -646,10 +712,12 @@ public class HotelManagmentSystem {
 			System.out.println();
 			return false;
 		} else {
+////////////////Need to set dates for that room to dirty.////////////////////////////////////////////////////////////////////////////
 			year.dirtyRoom(sMonth, sDay, sRoom);
+			
 			System.out.printf("Room %d was set for cleaning for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			System.out.println();
-			save(year);
+			saveRooms(year);
 			return true;
 		}
 	}
@@ -779,7 +847,7 @@ public class HotelManagmentSystem {
 		} else {
 			System.out.printf("Room %d currently booked and unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
 		}
-		save(year);
+		saveRooms(year);
 	}
 
 	/////////////////////// TO DO //////////////////////////////////////////
@@ -854,7 +922,7 @@ public class HotelManagmentSystem {
 			e.printStackTrace();
 		}
 		System.out.println();
-		save(year);
+		saveRooms(year);
 	}
 
 	/**
@@ -1019,7 +1087,7 @@ public class HotelManagmentSystem {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		save(year);
+		saveRooms(year);
 	}
 
 	/**
@@ -1145,7 +1213,7 @@ public class HotelManagmentSystem {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		save(year);
+		saveRooms(year);
 	}
 	
 //	public static void reportedEarnings(Calendar year, Scanner input) {
