@@ -166,16 +166,10 @@ public class Calendar {
 	 * @return (boolean) returns if room is unbooked or not.
 	 */
 	public boolean unbookRoom(int month, int day, int room) {
-		String status = "";
 		boolean roomSelected = Months.get(month).get(day).deselectRoom(room);
 		if (roomSelected) {
-			status = "Successful";
-			System.out.println(status);
-			System.out.println("Now Available");
 			return roomSelected;
 		} else {
-			status = "Unsuccessful";
-			System.out.println(status);
 			System.out.println("Error");
 			return roomSelected;
 		}
