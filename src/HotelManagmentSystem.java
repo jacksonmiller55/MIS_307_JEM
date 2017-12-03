@@ -43,7 +43,7 @@ public class HotelManagmentSystem {
 			selection = printSelectionOptions(input);
 
 			if (selection.equals("Q")) {
-				continueToRun = quitProgram(year,annualCharges);
+				continueToRun = quitProgram(year, annualCharges);
 			} else if (selection.equals("B")) {
 				bookSpecificRoomNumber(year, input);
 			} else if (selection.equals("D")) {
@@ -58,6 +58,8 @@ public class HotelManagmentSystem {
 				listOfRoomsToBeCleaned(year, input);
 			} else if (selection.equals("V")) {
 				vacancyReport(year, input);
+			} else if (selection.equals("E")) {
+				reportedEarnings(input, annualCharges);
 			}
 
 			// Tells the program that this is no longer the first run.
@@ -75,7 +77,7 @@ public class HotelManagmentSystem {
 	 */
 	private static Calendar loadData() {
 		Calendar year = new Calendar();
-		File saveRooms = new File("src\\save.txt");
+		File saveRooms = new File("src\\roomsBooked.txt");
 		try {
 			@SuppressWarnings("resource")
 			Scanner load = new Scanner(saveRooms);
@@ -95,10 +97,12 @@ public class HotelManagmentSystem {
 			return year;
 
 		} catch (FileNotFoundException e) {
+			System.out.println("Error: The rooms were not initiated.");
 			return year;
 		}
 	}
-/////
+
+	/////
 	/**
 	 * Loads the saved data from "save.txt". Inserts the booked rooms into a new
 	 * Calendar object. Creates a new Calendar object if no data is loaded in.
@@ -115,12 +119,13 @@ public class HotelManagmentSystem {
 				sMonth = load.nextInt();
 				sDay = load.nextInt();
 				sRoom = load.nextInt();
-				double charge= load.nextDouble();
+				double charge = load.nextDouble();
 				annualCharges.setChargesForRoom(sMonth, sDay, sRoom, charge);
 			}
 			return annualCharges;
 
 		} catch (FileNotFoundException e) {
+			System.out.println("Error: The charges were not initiated.");
 			return annualCharges;
 		}
 	}
@@ -133,7 +138,7 @@ public class HotelManagmentSystem {
 	 */
 	public static boolean quitProgram(Calendar year, AccountsRecievable annualCharges) {
 		System.out.println("You have quit the program.");
-		return (saveRooms(year) &&(saveAnnualCharges(annualCharges)));
+		return (saveRooms(year) && (saveAnnualCharges(annualCharges)));
 	}
 
 	/**
@@ -161,14 +166,14 @@ public class HotelManagmentSystem {
 				}
 			}
 			out.close();
-			
+
 			return true;
 		} catch (FileNotFoundException e) {
 			System.out.println("Print writer did not output to a file for the calendar.");
 			return false;
 		}
 	}
-	
+
 	/**
 	 * @param annualCharges
 	 * @return
@@ -193,7 +198,7 @@ public class HotelManagmentSystem {
 				}
 			}
 			out.close();
-			
+
 			return true;
 		} catch (FileNotFoundException e) {
 			System.out.println("Print writer did not output to a file for the annual charges.");
@@ -221,6 +226,7 @@ public class HotelManagmentSystem {
 		System.out.println("(M) Maintenance reporting clean room");
 		System.out.println("(L) List of rooms that need cleaned");
 		System.out.println("(V) Vaccancy Report");
+		System.out.println("(E) Earnings Report");
 		System.out.println("(C) Checkout");
 
 		selection = input.next();
@@ -237,7 +243,8 @@ public class HotelManagmentSystem {
 			} else if ((selection.toUpperCase().equals("Q")) || (selection.toUpperCase().equals("B"))
 					|| (selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("T"))
 					|| (selection.toUpperCase().equals("C")) || (selection.toUpperCase().equals("M"))
-					|| (selection.toUpperCase().equals("L")) || (selection.toUpperCase().equals("V"))) {
+					|| (selection.toUpperCase().equals("L")) || (selection.toUpperCase().equals("V"))
+					|| (selection.toUpperCase().equals("E"))) {
 				correctInput = true;
 			} else {
 				System.out.println("The Character must match one of the appropriat options.");
@@ -268,13 +275,13 @@ public class HotelManagmentSystem {
 
 		if (isRoomAvailable == 0) {
 			year.bookRoom(sMonth, sDay, sRoom);
-			
+
 			System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 
 		} else if (isRoomAvailable == -1) {
 			System.out.printf("Room %d is still dirty for %d-%d", sRoom, sMonth + 1, sDay + 1);
 		} else {
-			System.out.printf("Room %d currently booked and unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
+			System.out.printf("Room %d is currently booked and unavailable for %d-%d", sRoom, sMonth + 1, sDay + 1);
 		}
 		saveRooms(year);
 	}
@@ -526,7 +533,7 @@ public class HotelManagmentSystem {
 			}
 		}
 
-		if (selection.equals("D")) {
+		if (selection.toUpperCase().equals("D")) {
 			System.out.println("You have selected Queen Double");
 
 			sRoom = 101;
@@ -543,7 +550,7 @@ public class HotelManagmentSystem {
 				System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			}
 
-		} else if (selection.equals("S")) {
+		} else if (selection.toUpperCase().equals("S")) {
 			System.out.println("You have selected Single King");
 
 			sRoom = 121;
@@ -560,7 +567,7 @@ public class HotelManagmentSystem {
 				System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			}
 
-		} else if (selection.equals("K")) {
+		} else if (selection.toUpperCase().equals("K")) {
 			System.out.println("You have selected Kitchen Suite");
 
 			sRoom = 141;
@@ -577,7 +584,7 @@ public class HotelManagmentSystem {
 				System.out.printf("Room %d was booked for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			}
 
-		} else if (selection.equals("L")) {
+		} else if (selection.toUpperCase().equals("L")) {
 			System.out.println("You have selected Luxury Suite");
 
 			sRoom = 151;
@@ -676,7 +683,7 @@ public class HotelManagmentSystem {
 			System.out.println("Total Price: \t\t\t\t\t" + totalPriceAfterTax);
 			System.out.println("_______________________________________________________");
 			printReciept(numberOfMovies, numberOfMiniBarItems, roomPrice, totalPriceBeforeTax, tax, totalPriceAfterTax);
-			
+
 			saveRooms(year);
 			annualCharges.setChargesForRoom(sMonth, sDay, sRoom, totalPriceAfterTax);
 			return totalPriceAfterTax;
@@ -712,9 +719,8 @@ public class HotelManagmentSystem {
 			System.out.println();
 			return false;
 		} else {
-////////////////Need to set dates for that room to dirty.////////////////////////////////////////////////////////////////////////////
 			year.dirtyRoom(sMonth, sDay, sRoom);
-			
+
 			System.out.printf("Room %d was set for cleaning for %d-%d", sRoom, sMonth + 1, sDay + 1);
 			System.out.println();
 			saveRooms(year);
@@ -926,10 +932,13 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Allows the user to select a vacancy report of their choosing. "M" for a monthly report. "D" for a daily report.
+	 * Allows the user to select a vacancy report of their choosing. "M" for a
+	 * monthly report. "D" for a daily report.
 	 * 
-	 * @param year Calendar object. Used to reference month, date, and room number.
-	 * @param input Scanner (Scanner.in)
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner (Scanner.in)
 	 */
 	public static void vacancyReport(Calendar year, Scanner input) {
 		String selection = null;
@@ -963,11 +972,13 @@ public class HotelManagmentSystem {
 		}
 	}
 
-	
-	/**Generates a vacancy report for the selected day. Shows vacant rooms.
+	/**
+	 * Generates a vacancy report for the selected day. Shows vacant rooms.
 	 * 
-	 * @param year Calendar object. Used to reference month, date, and room number.
-	 * @param input Scanner (Scanner.in);
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner (Scanner.in);
 	 */
 	public static void dayVacancyReport(Calendar year, Scanner input) {
 		File dayVacancyReport = new File("src\\dayVacancyReport.html");
@@ -1093,8 +1104,10 @@ public class HotelManagmentSystem {
 	/**
 	 * Generates a vacancy report for the selected day. Shows vacant rooms.
 	 * 
-	 * @param year Calendar object. Used to reference month, date, and room number.
-	 * @param input Scanner (Scanner.in)
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner (Scanner.in)
 	 */
 	public static void monthVacancyReport(Calendar year, Scanner input) {
 		File monthVacancyReport = new File("src\\monthVacancyReport.html");
@@ -1215,8 +1228,301 @@ public class HotelManagmentSystem {
 		}
 		saveRooms(year);
 	}
-	
-//	public static void reportedEarnings(Calendar year, Scanner input) {
-		
-//	}
+
+	public static void reportedEarnings(Scanner input, AccountsRecievable annualCharges) {
+		String selection = null;
+		boolean correctInput = false;
+
+		System.out.println("(D) Day Reported Earnings Report");
+		System.out.println("(M) Month Reported Earnings Report");
+
+		selection = input.next();
+
+		while (!correctInput) {
+
+			if (selection.length() > 2) {
+				System.out.println("Please enter only one character to select the appropriat option.");
+				selection = input.next();
+			} else if (!Character.isAlphabetic(selection.charAt(0))) {
+				System.out.println(
+						"Please enter only the selected character to select the appropriat option. Numbers will not be accepted.");
+				selection = input.next();
+			} else if ((selection.toUpperCase().equals("D")) || (selection.toUpperCase().equals("M"))) {
+				correctInput = true;
+			} else {
+				System.out.println("The Character must match one of the appropriat options.");
+				selection = input.next();
+			}
+		}
+		if (selection.toUpperCase().equals("M")) {
+			monthReportedEarningsReport(annualCharges, input);
+		} else {
+			dayReportedEarningsReport(annualCharges, input);
+		}
+	}
+
+	/**
+	 * Generates a vacancy report for the selected day. Shows vacant rooms.
+	 * 
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner (Scanner.in);
+	 */
+	public static void dayReportedEarningsReport(AccountsRecievable annualCharges, Scanner input) {
+		File dayReportedEarningsReport = new File("src\\dayReportedEarningsReport.html");
+		FileWriter fstream = null;
+
+		sMonth = monthInput(input);
+		sDay = dayInput(input);
+
+		StringBuilder dayReportedEarningsReportBuilder = new StringBuilder();
+		dayReportedEarningsReportBuilder.append("<html style=\"background-color:beige;\">");
+		dayReportedEarningsReportBuilder.append("<head>");
+		dayReportedEarningsReportBuilder.append("<title>Earnings Report</h1</title>");
+		dayReportedEarningsReportBuilder.append("</head>");
+		dayReportedEarningsReportBuilder.append("<body>");
+		dayReportedEarningsReportBuilder.append("<center>");
+		dayReportedEarningsReportBuilder.append("<u>");
+		dayReportedEarningsReportBuilder
+				.append("<h1 style=\"color:darkred; font-style: italic; font-size: 40;\">Earnings Report</h1>");
+		dayReportedEarningsReportBuilder.append("</u>");
+
+		ArrayList<Integer> paymentsRecievedRoom = new ArrayList<Integer>();
+		ArrayList<Double> paymentsRecievedCharge = new ArrayList<Double>();
+
+		for (int room = 101; room < 153; room++) {
+			if (annualCharges.getChargesForRoom(sMonth, sDay, room) != 0) {
+				paymentsRecievedRoom.add(room);
+				paymentsRecievedCharge.add(annualCharges.getChargesForRoom(sMonth, sDay, room));
+			}
+		}
+
+		dayReportedEarningsReportBuilder
+				.append("<h2 style=\"font-weight: 800; font-family:sans-serif;\">Accounts Recievable</h2>");
+
+		boolean queenHeaderCalled = false;
+		boolean kingHeaderCalled = false;
+		boolean kitchenetteHeaderCalled = false;
+		boolean suiteHeaderCalled = false;
+		int dayToPrint = sDay + 1;
+		int monthToPrint = sMonth + 1;
+		dayReportedEarningsReportBuilder.append("<h2 style=\"color:darkred;font-family:sans-serif;\">Payments for: "
+				+ monthToPrint + "\\" + dayToPrint + "\\2017</h2>");
+
+		for (int i = 0; i < paymentsRecievedRoom.size(); i++) {
+			if (paymentsRecievedRoom.get(i) < 121) {
+				if (!queenHeaderCalled) {
+					dayReportedEarningsReportBuilder.append("<div>");
+					dayReportedEarningsReportBuilder.append("<u>");
+					dayReportedEarningsReportBuilder
+							.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\">Double-Queen</h3>");
+					dayReportedEarningsReportBuilder.append("</u>");
+					dayReportedEarningsReportBuilder.append("</div>");
+					queenHeaderCalled = true;
+				}
+			} else if (paymentsRecievedRoom.get(i) < 141) {
+				if (!kingHeaderCalled) {
+					dayReportedEarningsReportBuilder.append("<div>");
+					dayReportedEarningsReportBuilder.append("<u>");
+					dayReportedEarningsReportBuilder
+							.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\">Single-King</h3>");
+					dayReportedEarningsReportBuilder.append("</u>");
+					dayReportedEarningsReportBuilder.append("</div>");
+					kingHeaderCalled = true;
+				}
+			} else if (paymentsRecievedRoom.get(i) < 151) {
+				if (!kitchenetteHeaderCalled) {
+					dayReportedEarningsReportBuilder.append("<div>");
+					dayReportedEarningsReportBuilder.append("<u>");
+					dayReportedEarningsReportBuilder
+							.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\">Kitchenette-Suite</h3>");
+					dayReportedEarningsReportBuilder.append("</u>");
+					dayReportedEarningsReportBuilder.append("</div>");
+					kitchenetteHeaderCalled = true;
+				}
+			} else {
+				if (!suiteHeaderCalled) {
+					dayReportedEarningsReportBuilder.append("<div>");
+					dayReportedEarningsReportBuilder.append("<u>");
+					dayReportedEarningsReportBuilder
+							.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\">Luxury-Suite</h3>");
+					dayReportedEarningsReportBuilder.append("</u>");
+					dayReportedEarningsReportBuilder.append("</div>");
+					suiteHeaderCalled = true;
+				}
+			}
+			dayReportedEarningsReportBuilder.append("<p style=\"font-family:sans-serif; line-height: 70%;\"> Room: "
+					+ paymentsRecievedRoom.get(i) + " Payment: $" + paymentsRecievedCharge.get(i) + "</p>");
+		}
+		dayReportedEarningsReportBuilder.append("<div>");
+		dayReportedEarningsReportBuilder.append("<u>");
+
+		double totalChargesRecieved = 0;
+		for (int j = 0; j < paymentsRecievedCharge.size(); j++) {
+			totalChargesRecieved += paymentsRecievedCharge.get(j);
+		}
+		dayReportedEarningsReportBuilder.append(
+				"<h3 style=\"color:darkred; font-weight:900; font-family:sans-serif;\">Total amount recieved = $"
+						+ totalChargesRecieved + "</h3>");
+		dayReportedEarningsReportBuilder.append("</u>");
+		dayReportedEarningsReportBuilder.append("</div>");
+		dayReportedEarningsReportBuilder.append("<hr style=\"font-weight:900;\">");
+		dayReportedEarningsReportBuilder.append("</center>");
+		dayReportedEarningsReportBuilder.append("</body>");
+		dayReportedEarningsReportBuilder.append("</html>");
+
+		try {
+			fstream = new FileWriter(dayReportedEarningsReport);
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write(dayReportedEarningsReportBuilder.toString());
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			Desktop.getDesktop().browse(dayReportedEarningsReport.toURI());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		saveAnnualCharges(annualCharges);
+	}
+
+	/**
+	 * Generates a vacancy report for the selected day. Shows vacant rooms.
+	 * 
+	 * @param year
+	 *            Calendar object. Used to reference month, date, and room number.
+	 * @param input
+	 *            Scanner (Scanner.in)
+	 */
+	public static void monthReportedEarningsReport(AccountsRecievable annualCharges, Scanner input) {
+		File dayReportedEarningsReport = new File("src\\dayReportedEarningsReport.html");
+		FileWriter fstream = null;
+
+		sMonth = monthInput(input);
+
+		StringBuilder dayReportedEarningsReportBuilder = new StringBuilder();
+		dayReportedEarningsReportBuilder.append("<html style=\"background-color:beige;\">");
+		dayReportedEarningsReportBuilder.append("<head>");
+		dayReportedEarningsReportBuilder.append("<title>Earnings Report</h1</title>");
+		dayReportedEarningsReportBuilder.append("</head>");
+		dayReportedEarningsReportBuilder.append("<body>");
+		dayReportedEarningsReportBuilder.append("<center>");
+		dayReportedEarningsReportBuilder.append("<u>");
+		dayReportedEarningsReportBuilder
+				.append("<h1 style=\"color:darkred; font-style: italic; font-size: 40;\">Earnings Report</h1</h1>");
+		dayReportedEarningsReportBuilder.append("</u>");
+		double totalChargesRecieved = 0;
+		for (int day = 0; day < annualCharges.getNumDays(sMonth); day++) {
+			ArrayList<Integer> paymentsRecievedRoom = new ArrayList<Integer>();
+			ArrayList<Double> paymentsRecievedCharge = new ArrayList<Double>();
+
+			for (int room = 101; room < 153; room++) {
+				if (annualCharges.getChargesForRoom(sMonth, day, room) != 0) {
+					paymentsRecievedRoom.add(room);
+					paymentsRecievedCharge.add(annualCharges.getChargesForRoom(sMonth, day, room));
+				}
+			}
+			if (paymentsRecievedRoom.size() > 0) {
+				dayReportedEarningsReportBuilder
+						.append("<h2 style=\"font-weight: 800; font-family:sans-serif;\">Accounts Recievable</h2>");
+
+				boolean queenHeaderCalled = false;
+				boolean kingHeaderCalled = false;
+				boolean kitchenetteHeaderCalled = false;
+				boolean suiteHeaderCalled = false;
+				int dayToPrint = day + 1;
+				int monthToPrint = sMonth + 1;
+				dayReportedEarningsReportBuilder
+						.append("<h2 style=\"color:darkred;font-family:sans-serif;\">Payments for: " + monthToPrint
+								+ "\\" + dayToPrint + "\\2017</h2>");
+
+				for (int i = 0; i < paymentsRecievedRoom.size(); i++) {
+					if (paymentsRecievedRoom.get(i) < 121) {
+						if (!queenHeaderCalled) {
+							dayReportedEarningsReportBuilder.append("<div>");
+							dayReportedEarningsReportBuilder.append("<u>");
+							dayReportedEarningsReportBuilder.append(
+									"<h3 style=\"font-weight: 800; font-family:sans-serif;\">Double-Queen</h3>");
+							dayReportedEarningsReportBuilder.append("</u>");
+							dayReportedEarningsReportBuilder.append("</div>");
+							queenHeaderCalled = true;
+						}
+					} else if (paymentsRecievedRoom.get(i) < 141) {
+						if (!kingHeaderCalled) {
+							dayReportedEarningsReportBuilder.append("<div>");
+							dayReportedEarningsReportBuilder.append("<u>");
+							dayReportedEarningsReportBuilder
+									.append("<h3 style=\"font-weight: 800; font-family:sans-serif;\">Single-King</h3>");
+							dayReportedEarningsReportBuilder.append("</u>");
+							dayReportedEarningsReportBuilder.append("</div>");
+							kingHeaderCalled = true;
+						}
+					} else if (paymentsRecievedRoom.get(i) < 151) {
+						if (!kitchenetteHeaderCalled) {
+							dayReportedEarningsReportBuilder.append("<div>");
+							dayReportedEarningsReportBuilder.append("<u>");
+							dayReportedEarningsReportBuilder.append(
+									"<h3 style=\"font-weight: 800; font-family:sans-serif;\">Kitchenette-Suite</h3>");
+							dayReportedEarningsReportBuilder.append("</u>");
+							dayReportedEarningsReportBuilder.append("</div>");
+							kitchenetteHeaderCalled = true;
+						}
+					} else {
+						if (!suiteHeaderCalled) {
+							dayReportedEarningsReportBuilder.append("<div>");
+							dayReportedEarningsReportBuilder.append("<u>");
+							dayReportedEarningsReportBuilder.append(
+									"<h3 style=\"font-weight: 800; font-family:sans-serif;\">Luxury-Suite</h3>");
+							dayReportedEarningsReportBuilder.append("</u>");
+							dayReportedEarningsReportBuilder.append("</div>");
+							suiteHeaderCalled = true;
+						}
+					}
+					dayReportedEarningsReportBuilder
+							.append("<p style=\"font-family:sans-serif; line-height: 70%;\"> Room: "
+									+ paymentsRecievedRoom.get(i) + " Payment: $" + paymentsRecievedCharge.get(i)
+									+ "</p>");
+				}
+			}
+			dayReportedEarningsReportBuilder.append("<div>");
+			
+
+			for (int j = 0; j < paymentsRecievedCharge.size(); j++) {
+				totalChargesRecieved += paymentsRecievedCharge.get(j);
+			}
+
+		}
+		dayReportedEarningsReportBuilder.append("<u>");
+		dayReportedEarningsReportBuilder.append(
+				"<h3 style=\"color:darkred; font-weight:900; font-family:sans-serif;\">Total amount recieved to date = $"
+						+ totalChargesRecieved + "</h3>");
+		dayReportedEarningsReportBuilder.append("</u>");
+		dayReportedEarningsReportBuilder.append("</div>");
+		dayReportedEarningsReportBuilder.append("<hr style=\"font-weight:900;\">");
+		dayReportedEarningsReportBuilder.append("</center>");
+		dayReportedEarningsReportBuilder.append("</body>");
+		dayReportedEarningsReportBuilder.append("</html>");
+
+		try {
+			fstream = new FileWriter(dayReportedEarningsReport);
+			BufferedWriter out = new BufferedWriter(fstream);
+			out.write(dayReportedEarningsReportBuilder.toString());
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			Desktop.getDesktop().browse(dayReportedEarningsReport.toURI());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		saveAnnualCharges(annualCharges);
+	}
+
 }
