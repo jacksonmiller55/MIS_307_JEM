@@ -1,4 +1,14 @@
 
+/**
+ * Code for RecordedRoomCharges. This class provides the structure for getting and setting
+ * the charges for rooms. The room number determines the type of room.
+ * 
+ * @date 12/5/2017
+ * 
+ * @author Jackson Miller
+ * @author Madison Fisher
+ * @author Elias VanHorn
+ */
 public class RecordedRoomCharges {
 	private final int QUEEN_DOUBLE = 20;
 	private final int SINGLE_KING = 20;
@@ -75,7 +85,7 @@ public class RecordedRoomCharges {
 	private double getLuxurySuiteRoomCharges(int selectedRoom) {
 		return luxurySuiteRooms[selectedRoom];
 	}
-////////////////////////
+
 	/**
 	 * Sets the charges that are assigned to the room.
 	 * 
@@ -83,19 +93,19 @@ public class RecordedRoomCharges {
 	 *            Room number that the user would like to book.
 	 * @return The charge that is assigned to the room.
 	 */
-	public double setRoom(int room, double charge) {
+	public double setRoomCharges(int room, double charge) {
 		room -= 101;
 		if ((room >= 0) && (room < 20)) {
-			return setQueenDoubleRoom(room, charge);
+			return setQueenDoubleRoomCharges(room, charge);
 		} else if ((room >= 20) && (room < 40)) {
 			room -= 20;
-			return setSingleKingRoom(room, charge);
+			return setSingleKingRoomCharges(room, charge);
 		} else if ((room >= 40) && (room < 50)) {
 			room -= 40;
-			return setkitchenSuiteRoom(room, charge);
+			return setkitchenSuiteRoomCharges(room, charge);
 		} else {
 			room -= 50;
-			return setLuxurySuiteRoom(room, charge);
+			return setLuxurySuiteRoomCharges(room, charge);
 		}
 	}
 
@@ -106,7 +116,7 @@ public class RecordedRoomCharges {
 	 *            Room number in the section of room types
 	 * @return The charge that is assigned to the room.
 	 */
-	private double setQueenDoubleRoom(int selectedRoom, double charge) {
+	private double setQueenDoubleRoomCharges(int selectedRoom, double charge) {
 		return queenDoubleRooms[selectedRoom] = charge;
 	}
 
@@ -117,7 +127,7 @@ public class RecordedRoomCharges {
 	 *            Room number in the section of room types
 	 * @return The charge that is assigned to the room.
 	 */
-	private double setSingleKingRoom(int selectedRoom, double charge) {
+	private double setSingleKingRoomCharges(int selectedRoom, double charge) {
 		return singleKingRooms[selectedRoom] = charge;
 	}
 
@@ -128,7 +138,7 @@ public class RecordedRoomCharges {
 	 *            Room number in the section of room types
 	 * @return The charge that is assigned to the room.
 	 */
-	private double setkitchenSuiteRoom(int selectedRoom, double charge) {
+	private double setkitchenSuiteRoomCharges(int selectedRoom, double charge) {
 		return kitchenSuiteRooms[selectedRoom] = charge;
 	}
 
@@ -139,7 +149,7 @@ public class RecordedRoomCharges {
 	 *            Room number in the section of room types
 	 * @return The charge that is assigned to the room.
 	 */
-	private double setLuxurySuiteRoom(int selectedRoom, double charge) {
+	private double setLuxurySuiteRoomCharges(int selectedRoom, double charge) {
 		return luxurySuiteRooms[selectedRoom] = charge;
 	}
 }

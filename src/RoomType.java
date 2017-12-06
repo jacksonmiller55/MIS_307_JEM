@@ -2,7 +2,7 @@
  * Code for RoomType. This class provides the structure for getting and setting
  * rooms. The room number determines the type of room.
  * 
- * @date 11/20/2017
+ * @date 12/5/2017
  * 
  * @author Jackson Miller
  * @author Madison Fisher
@@ -85,7 +85,7 @@ public class RoomType {
 	private double getLuxurySuiteRoom(int selectedRoom) {
 		return luxurySuiteRooms[selectedRoom];
 	}
-////////////////////////
+
 	/**
 	 * Sets the room price in the appropriate room type array. This books the room.
 	 * 

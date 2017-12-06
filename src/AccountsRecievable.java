@@ -1,5 +1,18 @@
 import java.util.ArrayList;
 
+/**
+ * This class provides the structure for accessing room based on the date that
+ * they are selected. This class is used to get and set set the total room
+ * charges based on the date selected.
+ * 
+ * 
+ * @date 12/5/2017
+ * 
+ * @author Jackson Miller
+ * @author Madison Fisher
+ * @author Elias VanHorn
+ *
+ */
 public class AccountsRecievable {
 	private final int JANUARY = 31;
 	private final int FEBUARY = 28;
@@ -19,8 +32,9 @@ public class AccountsRecievable {
 	private ArrayList<ArrayList<RecordedRoomCharges>> Months = new ArrayList<ArrayList<RecordedRoomCharges>>();
 
 	/**
-	 * Constructs a an ArrayList that adds all 152 rooms for each day in each month.
-	 * It then adds each month to the Calendar year ArrayList.
+	 * Constructs a an ArrayList that adds all 152 rooms for each day in each month
+	 * by utilizing the RecordedRoomCharges class. It then adds each month to the
+	 * Calendar year ArrayList.
 	 */
 	public AccountsRecievable() {
 		ArrayList<RecordedRoomCharges> january = new ArrayList<RecordedRoomCharges>();
@@ -98,7 +112,7 @@ public class AccountsRecievable {
 		Months.add(december);
 
 	}
-	
+
 	/**
 	 * Returns the number of days in a selected month.
 	 * 
@@ -137,7 +151,7 @@ public class AccountsRecievable {
 		} else
 			return 31;
 	}
-	
+
 	/**
 	 * Gets the amount that is charged to the room.
 	 * 
@@ -149,13 +163,13 @@ public class AccountsRecievable {
 	 *            depending on the Calendar month. Day to be booked.
 	 * @param room
 	 *            (int) Ranges from 101 to 152. Room selected to be booked.
-	 
+	 * 
 	 * @return The charges assigned to the room.
 	 */
 	public double getChargesForRoom(int month, int day, int room) {
 		return Months.get(month).get(day).getRoomCharges(room);
 	}
-	
+
 	/**
 	 * Sets the amount that is charged to the room.
 	 * 
@@ -170,7 +184,7 @@ public class AccountsRecievable {
 	 * @return (boolean) true if the charges were set. false if not.
 	 */
 	public boolean setChargesForRoom(int month, int day, int room, double charge) {
-		double roomSelected = Months.get(month).get(day).setRoom(room, charge);
+		double roomSelected = Months.get(month).get(day).setRoomCharges(room, charge);
 		if (roomSelected == 0) {
 			return true;
 		} else {

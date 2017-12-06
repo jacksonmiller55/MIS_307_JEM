@@ -13,9 +13,10 @@ import java.text.DecimalFormat;
 /**
  * Code for HotelManagementSystem This class provides the main interface that
  * the user interacts with in order to select a room number and date that they
- * would like to book, check to see if it is vacant, deselect, or check out.
+ * would like to book, check to see if it is vacant, deselect, check out, print
+ * a variety of reports.
  * 
- * @date 11/20/2017
+ * @date 12/5/2017
  * 
  * @author Jackson Miller
  * @author Madison Fisher
@@ -26,6 +27,12 @@ public class HotelManagmentSystem {
 	static int sDay;
 	static int sRoom;
 
+	/**
+	 * This is the main method that calls all other methods for the user. It runs
+	 * until the user wishes to quit the program.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		String selection = null;
 		Scanner input = new Scanner(System.in);
@@ -70,8 +77,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Loads the saved data from "save.txt". Inserts the booked rooms into a new
-	 * Calendar object. Creates a new Calendar object if no data is loaded in.
+	 * Loads the saved data from "roomsBooked.txt". Inserts the booked rooms into a
+	 * new Calendar object. Creates a new Calendar object if no data is loaded in.
 	 * 
 	 * @return new Calendar year.
 	 */
@@ -102,10 +109,10 @@ public class HotelManagmentSystem {
 		}
 	}
 
-	/////
 	/**
-	 * Loads the saved data from "save.txt". Inserts the booked rooms into a new
-	 * Calendar object. Creates a new Calendar object if no data is loaded in.
+	 * Loads the saved data from "annualCharges.txt". Inserts the booked rooms into
+	 * a new AccountsRecievable object. Creates a new AccountsRecievable object if
+	 * no data is loaded in.
 	 * 
 	 * @return new AccountsRecievable annualCharges.
 	 */
@@ -132,9 +139,9 @@ public class HotelManagmentSystem {
 
 	/**
 	 * Quits the program and saves the all of the room states if they are booked or
-	 * not. Rooms are saved in the file "save.text".
+	 * not. Rooms and charges are saved.
 	 * 
-	 * @return False quit the program.
+	 * @return True to quit the program.
 	 */
 	public static boolean quitProgram(Calendar year, AccountsRecievable annualCharges) {
 		System.out.println("You have quit the program.");
@@ -142,8 +149,11 @@ public class HotelManagmentSystem {
 	}
 
 	/**
+	 * Saves the rooms and the states to "roomsBooked.txt".
+	 * 
 	 * @param year
-	 * @return
+	 *            (Calendar) object that contains the booked and unbooked rooms.
+	 * @return true if file saved correctly.
 	 */
 	public static boolean saveRooms(Calendar year) {
 		File save = new File("src\\roomsBooked.txt");
@@ -175,8 +185,13 @@ public class HotelManagmentSystem {
 	}
 
 	/**
+	 * Saves the total charges that were assigned to each room to
+	 * "annualCharges.txt".
+	 * 
 	 * @param annualCharges
-	 * @return
+	 *            AccountsRevievable Object that stores the charges assigned to each
+	 *            room.
+	 * @return True if the charges were successfully saved.
 	 */
 	public static boolean saveAnnualCharges(AccountsRecievable annualCharges) {
 		File save = new File("src\\annualCharges.txt");
@@ -287,7 +302,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Allows the user to de-select a room so that it is available to book.
+	 * Allows the user to de-select a room so that it is available to book in the
+	 * case that they accidentally booked the wrong room.
 	 * 
 	 * @param year
 	 *            Calendar object. Used to reference month, date, and room number.
@@ -301,8 +317,6 @@ public class HotelManagmentSystem {
 		sDay = dayInput(input);
 
 		sRoom = roomInput(input);
-
-		// Calendar calendarToReturn = new Calendar(year);
 
 		double isRoomAvailable;
 		isRoomAvailable = year.checkRoomAvailable(sMonth, sDay, sRoom);
@@ -333,7 +347,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Gets the user input for the month that the user would like to book.
+	 * Gets the user input for the month that the user would like to book. Making
+	 * sure that it is an acceptable entry.
 	 * 
 	 * @param input
 	 *            Scanner(System.in);
@@ -367,7 +382,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Gets the user input for the day that the user would like to book.
+	 * Gets the user input for the day that the user would like to book. Making sure
+	 * that it is an acceptable entry.
 	 * 
 	 * @param input
 	 *            Scanner(System.in);
@@ -445,7 +461,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Gets the room input from the user.
+	 * Gets the room input from the user. Making sure that it is an acceptable
+	 * entry.
 	 * 
 	 * @param input
 	 *            Scanner(System.in);
@@ -476,8 +493,12 @@ public class HotelManagmentSystem {
 	}
 
 	/**
+	 * Checks to make sure that the entry is a number.
+	 * 
 	 * @param text
-	 * @return
+	 *            entered text by the user.
+	 * 
+	 * @return True if the text entered is a number.
 	 */
 	public static boolean isNumber(String text) {
 		boolean isaNumber = false;
@@ -728,14 +749,22 @@ public class HotelManagmentSystem {
 		}
 	}
 
-	/////////////////////// TO DO ////////////////////////////////////////
 	/**
+	 * Prints a receipt for the customer in an html file. It also opens this html
+	 * file "reciept.html".
+	 * 
 	 * @param numberOfMovies
+	 *            The number of movies watched by the customer.
 	 * @param numberOfMiniBarItems
+	 *            The number of mini bar items.
 	 * @param roomPrice
+	 *            The initial price of the room.
 	 * @param totalPriceBeforeTax
+	 *            the total price of the rooms and the extra expenses before tax.
 	 * @param tax
+	 *            The amount of tax to be multiplied to totalPriceBeforeTax
 	 * @param totalPriceAfterTax
+	 *            The total charge of the room expenses and the added value of tax.
 	 */
 	public static void printReciept(int numberOfMovies, int numberOfMiniBarItems, double roomPrice,
 			double totalPriceBeforeTax, double tax, double totalPriceAfterTax) {
@@ -825,7 +854,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Books a specific room number for the given month, date, and room number.
+	 * Sets a specific room number to clean for the given month, date, and room
+	 * number.
 	 * 
 	 * @param year
 	 *            Calendar object. Used to reference month, date, and room number.
@@ -856,10 +886,15 @@ public class HotelManagmentSystem {
 		saveRooms(year);
 	}
 
-	/////////////////////// TO DO //////////////////////////////////////////
 	/**
+	 * Lists the rooms that need to be cleaned. It prints these rooms out on a
+	 * maintenance list in an html file. This html file is called
+	 * "cleaningList.html".
+	 * 
 	 * @param year
+	 *            Calandar object
 	 * @param input
+	 *            Scanner (Scanner.in)
 	 */
 	public static void listOfRoomsToBeCleaned(Calendar year, Scanner input) {
 
@@ -973,7 +1008,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Generates a vacancy report for the selected day. Shows vacant rooms.
+	 * Generates a vacancy report for the selected day. Shows vacant rooms in html
+	 * file "dayVacancyReport.html"
 	 * 
 	 * @param year
 	 *            Calendar object. Used to reference month, date, and room number.
@@ -1102,7 +1138,8 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Generates a vacancy report for the selected day. Shows vacant rooms.
+	 * Generates a vacancy report for the selected day. Shows vacant rooms in html
+	 * file "monthVacancyReport.html".
 	 * 
 	 * @param year
 	 *            Calendar object. Used to reference month, date, and room number.
@@ -1229,6 +1266,14 @@ public class HotelManagmentSystem {
 		saveRooms(year);
 	}
 
+	/**
+	 * Allows the user to select a earnings report of their choosing. "M" for a
+	 * monthly report. "D" for a daily report.
+	 * 
+	 * @param input Scanner (Scanner.in)
+	 * 
+	 * @param annualCharges AccountsRecievable Object
+	 */
 	public static void reportedEarnings(Scanner input, AccountsRecievable annualCharges) {
 		String selection = null;
 		boolean correctInput = false;
@@ -1262,7 +1307,7 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Generates a vacancy report for the selected day. Shows vacant rooms.
+	 * Generates a earnings report for the selected day. Prints the earnings in "dayReportedEarningsReport.html".
 	 * 
 	 * @param year
 	 *            Calendar object. Used to reference month, date, and room number.
@@ -1391,7 +1436,7 @@ public class HotelManagmentSystem {
 	}
 
 	/**
-	 * Generates a vacancy report for the selected day. Shows vacant rooms.
+	 * Generates a earnings report for the selected day. Prints the earnings in "monthReportedEarningsReport.html".
 	 * 
 	 * @param year
 	 *            Calendar object. Used to reference month, date, and room number.
@@ -1399,7 +1444,7 @@ public class HotelManagmentSystem {
 	 *            Scanner (Scanner.in)
 	 */
 	public static void monthReportedEarningsReport(AccountsRecievable annualCharges, Scanner input) {
-		File dayReportedEarningsReport = new File("src\\dayReportedEarningsReport.html");
+		File dayReportedEarningsReport = new File("src\\monthReportedEarningsReport.html");
 		FileWriter fstream = null;
 
 		sMonth = monthInput(input);
@@ -1489,7 +1534,6 @@ public class HotelManagmentSystem {
 				}
 			}
 			dayReportedEarningsReportBuilder.append("<div>");
-			
 
 			for (int j = 0; j < paymentsRecievedCharge.size(); j++) {
 				totalChargesRecieved += paymentsRecievedCharge.get(j);

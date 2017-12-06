@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * deselct specific rooms based on the date selected. It also is used to check
  * the price of a specific room based on the room number.
  * 
- * @date 11/20/2017
+ * @date 12/5/2017
  * 
  * @author Jackson Miller
  * @author Madison Fisher
@@ -32,8 +32,9 @@ public class Calendar {
 	private ArrayList<ArrayList<RoomType>> Months = new ArrayList<ArrayList<RoomType>>();
 
 	/**
-	 * Constructs a an ArrayList that adds all 152 rooms for each day in each month.
-	 * It then adds each month to the Calendar year ArrayList.
+	 * Constructs a an ArrayList that adds all 152 rooms for each day in each month
+	 * by utilizing the Room Type class. It then adds each month to the Calendar
+	 * year ArrayList.
 	 */
 	public Calendar() {
 		ArrayList<RoomType> january = new ArrayList<RoomType>();
@@ -127,7 +128,7 @@ public class Calendar {
 	 */
 	public double checkRoomAvailable(int month, int day, int room) {
 		return Months.get(month).get(day).getRoom(room);
-		
+
 	}
 
 	/**
@@ -232,30 +233,32 @@ public class Calendar {
 		} else
 			return 31;
 	}
-	
+
 	/**
-	 * Unbooks the room for the given month, day, and room. It sets it to a dirty state.
+	 * Unbooks the room for the given month, day, and room. It sets it to a dirty
+	 * state.
 	 * 
 	 * @param month
-	 *            (int) Equals actual -1) Ranges from 0 - 11. Month selected to be set to
-	 *            dirty.
+	 *            (int) Equals actual -1) Ranges from 0 - 11. Month selected to be
+	 *            set to dirty.
 	 * @param day
 	 *            (int) (Equals actual -1) Ranges from 0 - 30, 0 - 29, or 0 - 27
 	 *            depending on the Calendar month. Day to be set to dirty.
 	 * @param room
 	 *            (int) Ranges from 101 to 152. Room selected to be set to dirty.
-	 * @return (boolean) returns true if room is set to dirty or false if not set to dirty.
+	 * @return (boolean) returns true if room is set to dirty or false if not set to
+	 *         dirty.
 	 */
 	public boolean dirtyRoom(int month, int day, int room) {
 		boolean isDirty = true;
-		double dirtyRoom= Months.get(month).get(day).setDirtyRoom(room);
+		double dirtyRoom = Months.get(month).get(day).setDirtyRoom(room);
 		if (dirtyRoom == -1) {
 			return isDirty;
 		} else {
 			return !isDirty;
 		}
 	}
-	
+
 	/**
 	 * Sets the room to a clean state for the given month, day and room.
 	 * 
